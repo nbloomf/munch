@@ -1,0 +1,35 @@
+name:           munch
+version:        0.0.1.0
+description:    Please see the README on GitHub at <https://github.com/nbloomf/munch#readme>
+homepage:       https://github.com/nbloomf/munch#readme
+bug-reports:    https://github.com/nbloomf/munch/issues
+author:         Nathan Bloomfield
+maintainer:     nathan.bloomfield@a8c.com
+copyright:      2018 Automattic, Inc.
+license:        GPL-3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+  CHANGELOG.md
+  README.md
+
+source-repository head
+  type: git
+  location: https://github.com/nbloomf/munch
+
+library
+  default-language: Haskell2010
+  hs-source-dirs: src
+  exposed-modules:
+      Text.ParserCombinators.Munch
+  build-depends: base >=4.7 && <5
+
+test-suite munch-test
+  default-language: Haskell2010
+  type: exitcode-stdio-1.0
+  main-is: Test.lhs
+  hs-source-dirs: test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends: base >=4.7 && <5, munch
