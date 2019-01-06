@@ -50,10 +50,10 @@ Code that is part of the library appears on a gray background, like this block o
 >   , Stream(), toStream, Token(..), Pos(..), DidConsume(..)
 >     -- * Basic Parsers
 >   , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed
->   , choice, manySepBy, someSepBy, string
+>   , choice, manySepBy, someSepBy
 >     -- ** @Char@
 >   , char, newline, spaces, decimalDigit, hexDigit
->   , lowerLatin, upperLatin
+>   , lowerLatin, upperLatin, string
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
