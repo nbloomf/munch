@@ -129,28 +129,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-29" data-line-number="29">  , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed</a>
 <a class="sourceLine" id="cb2-30" data-line-number="30">  , choice, manySepBy, someSepBy, string</a>
 <a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Char@</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">  , char, newline, spaces, decimalDigit, hexDigit, lowerLatin, upperLatin</a>
-<a class="sourceLine" id="cb2-33" data-line-number="33">    <span class="co">-- * Errors</span></a>
-<a class="sourceLine" id="cb2-34" data-line-number="34">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
-<a class="sourceLine" id="cb2-35" data-line-number="35">  , displayParseError</a>
-<a class="sourceLine" id="cb2-36" data-line-number="36">    <span class="co">-- * Indentation</span></a>
-<a class="sourceLine" id="cb2-37" data-line-number="37">  , readRef, adjustRef, localRef, consume, ignore</a>
-<a class="sourceLine" id="cb2-38" data-line-number="38">  , <span class="dt">Indentation</span>(<span class="fu">..</span>), indent</a>
-<a class="sourceLine" id="cb2-39" data-line-number="39">    <span class="co">-- ** Simple Indentation</span></a>
-<a class="sourceLine" id="cb2-40" data-line-number="40">  , wrtRef, wrtPos, <span class="dt">Endpoint</span>(<span class="fu">..</span>), <span class="dt">Relation</span>(<span class="fu">..</span>), <span class="dt">Dimension</span>(<span class="fu">..</span>)</a>
-<a class="sourceLine" id="cb2-41" data-line-number="41">    <span class="co">-- * Permutations</span></a>
-<a class="sourceLine" id="cb2-42" data-line-number="42">  , permute, permuteSepBy, permuteIndent, permuteIndentSepBy</a>
-<a class="sourceLine" id="cb2-43" data-line-number="43">  , (<span class="fu">&lt;$$&gt;</span>), (<span class="fu">&lt;&amp;&amp;&gt;</span>), (<span class="fu">&lt;$?&gt;</span>), (<span class="fu">&lt;&amp;?&gt;</span>), <span class="dt">Perms</span>()</a>
-<a class="sourceLine" id="cb2-44" data-line-number="44">) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb2-45" data-line-number="45"></a>
-<a class="sourceLine" id="cb2-46" data-line-number="46"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
-<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
-<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="kw">import</span> <span class="dt">Data.String</span></a>
-<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
-<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
-<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
-<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
-<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
+<a class="sourceLine" id="cb2-32" data-line-number="32">  , char, newline, spaces, decimalDigit, hexDigit</a>
+<a class="sourceLine" id="cb2-33" data-line-number="33">  , lowerLatin, upperLatin</a>
+<a class="sourceLine" id="cb2-34" data-line-number="34">    <span class="co">-- * Errors</span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
+<a class="sourceLine" id="cb2-36" data-line-number="36">  , displayParseError</a>
+<a class="sourceLine" id="cb2-37" data-line-number="37">    <span class="co">-- * Indentation</span></a>
+<a class="sourceLine" id="cb2-38" data-line-number="38">  , readRef, adjustRef, localRef, consume, ignore</a>
+<a class="sourceLine" id="cb2-39" data-line-number="39">  , <span class="dt">Indentation</span>(<span class="fu">..</span>), indent</a>
+<a class="sourceLine" id="cb2-40" data-line-number="40">    <span class="co">-- ** Simple Indentation</span></a>
+<a class="sourceLine" id="cb2-41" data-line-number="41">  , wrtRef, wrtPos, <span class="dt">Endpoint</span>(<span class="fu">..</span>), <span class="dt">Relation</span>(<span class="fu">..</span>), <span class="dt">Dimension</span>(<span class="fu">..</span>)</a>
+<a class="sourceLine" id="cb2-42" data-line-number="42">    <span class="co">-- * Permutations</span></a>
+<a class="sourceLine" id="cb2-43" data-line-number="43">  , permute, permuteSepBy, permuteIndent, permuteIndentSepBy</a>
+<a class="sourceLine" id="cb2-44" data-line-number="44">  , (<span class="fu">&lt;$$&gt;</span>), (<span class="fu">&lt;&amp;&amp;&gt;</span>), (<span class="fu">&lt;$?&gt;</span>), (<span class="fu">&lt;&amp;?&gt;</span>), <span class="dt">Perms</span>()</a>
+<a class="sourceLine" id="cb2-45" data-line-number="45">) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb2-46" data-line-number="46"></a>
+<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
+<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
+<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="dt">Data.String</span></a>
+<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
+<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
+<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
+<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
+<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
 <h2 id="contents">Contents</h2>
 <ul>
 <li>The Library
@@ -185,19 +186,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The <code>DidConsume</code> type is defined like so.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co">-- | Represents whether a parser consumed part of the input stream.</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">data</span> <span class="dt">DidConsume</span> t</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">  <span class="fu">=</span> <span class="dt">Declined</span>                 <span class="co">-- ^ The parse did not consume any characters.</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">  <span class="fu">|</span> <span class="dt">Consumed</span> (<span class="dt">Pos</span> t) (<span class="dt">Pos</span> t) <span class="co">-- ^ The parse consumed input characters</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">                             <span class="co">--   between two positions (inclusive).</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">  <span class="kw">deriving</span> <span class="dt">Show</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">-- | @Pos@ represents a position in the input stream consisting of</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">--   a /line number/ and a /column number/, both of which are</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">--   nonnegative integers. The @Ord@ instance is lexicographic by</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">--   line, then column. </span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="kw">data</span> <span class="dt">Pos</span> t <span class="fu">=</span> <span class="dt">Pos</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13">  {<span class="ot"> line ::</span> <span class="dt">Integer</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14">  ,<span class="ot"> column ::</span> <span class="dt">Integer</span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15">  } <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Show</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  <span class="fu">=</span> <span class="dt">Declined</span>                 <span class="co">-- ^ The parse did not consume any</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">                             <span class="co">--   characters.</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">Consumed</span> (<span class="dt">Pos</span> t) (<span class="dt">Pos</span> t) <span class="co">-- ^ The parse consumed input characters</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">                             <span class="co">--   between two positions (inclusive).</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">  <span class="kw">deriving</span> <span class="dt">Show</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">-- | @Pos@ represents a position in the input stream consisting of</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">--   a /line number/ and a /column number/, both of which are</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">--   nonnegative integers. The @Ord@ instance is lexicographic by</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">--   line, then column. </span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="kw">data</span> <span class="dt">Pos</span> t <span class="fu">=</span> <span class="dt">Pos</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14">  {<span class="ot"> line ::</span> <span class="dt">Integer</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">  ,<span class="ot"> column ::</span> <span class="dt">Integer</span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16">  } <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Show</span>)</a></code></pre></div>
 <p>Note that “parse consumed characters” and “parse succeeded” are orthogonal. This is important. Note also that the location of <code>DidConsume</code> in the signature of <code>parse</code> fits the classic writer monad pattern. To make this legit, <code>DidConsume</code> will need a <code>Monoid</code> instance – that is, we need a natural way to combine two pieces of information about consumption into a single one. The Parsec paper talks about this (albeit in the language of type constructors, rather than data): if <code>a</code> and <code>b</code> are <code>DidConsume</code>s, then <code>a &lt;&gt; b</code> should be <code>Consumed</code> if either <code>a</code> or <code>b</code> is, and should be <code>Declined</code> otherwise. The simplest way I can think of to combine two ranges is to construct their “convex hull”; the smallest range containing both. Concretely:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co">-- | The product of two @Consumed@ ranges is their convex hull. This is</span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">--   the direct product of the @min@ and @max@ semigroups over @Integer@</span></a>
@@ -226,7 +228,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb9-11" data-line-number="11">  [] <span class="ot">-&gt;</span> <span class="dt">Nothing</span></a>
 <a class="sourceLine" id="cb9-12" data-line-number="12">  _  <span class="ot">-&gt;</span> <span class="dt">Just</span> pos</a></code></pre></div>
 <p>The <code>t</code> type represents our tokens. So our parsers will have a type like this:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="ot">parser ::</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Stream</span> t <span class="ot">-&gt;</span> (<span class="dt">DidConsume</span>, <span class="dt">Either</span> <span class="dt">ParseError</span> (a, <span class="dt">Stream</span> t))</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" data-line-number="1">parser</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="ot">  ::</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="ot">=&gt;</span> <span class="dt">Stream</span> t <span class="ot">-&gt;</span> (<span class="dt">DidConsume</span>, <span class="dt">Either</span> <span class="dt">ParseError</span> (a, <span class="dt">Stream</span> t))</a></code></pre></div>
 <p>But what exactly should be special about tokens? The most important thing we will do with streams is read the head token (if it exists) and return the remaining stream. This will require <em>updating</em> the head position, typically taking into account which token was taken. We also need a canonical choice for the <em>initial</em> position for a given token type.</p>
 <p>With this in mind, we define the <code>Token</code> class like so.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co">-- | Class representing types of &quot;parseable&quot; tokens.</span></a>
@@ -496,6 +500,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb24-33" data-line-number="33">upperLatin <span class="fu">=</span> satisfies</a>
 <a class="sourceLine" id="cb24-34" data-line-number="34">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>)</a>
 <a class="sourceLine" id="cb24-35" data-line-number="35">  <span class="st">&quot;upper case latin letter (A-Z)&quot;</span></a></code></pre></div>
+<p>For fun:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Token</span> <span class="dt">Word8</span> <span class="kw">where</span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2">  updatePos _ (<span class="dt">Pos</span> _ offset) <span class="fu">=</span> <span class="dt">Pos</span> <span class="dv">0</span> (offset <span class="fu">+</span> <span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb25-3" data-line-number="3"></a>
