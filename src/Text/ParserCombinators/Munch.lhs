@@ -493,7 +493,7 @@ Some `Char` specific parsers:
 >   (\c -> elem c "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 >   "upper case latin letter (A-Z)"
 
-
+For fun:
 
 > instance Token Word8 where
 >   updatePos _ (Pos _ offset) = Pos 0 (offset + 1)
