@@ -54,6 +54,8 @@ Code that is part of the library appears on a gray background, like this block o
 >     -- ** @Char@
 >   , char, newline, spaces, decimalDigit, hexDigit
 >   , lowerLatin, upperLatin, string
+>     -- ** @Word8@
+>   , byte, unicodeChar
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -67,6 +69,8 @@ Code that is part of the library appears on a gray background, like this block o
 >   , (<$$>), (<&&>), (<$?>), (<&?>), Perms()
 > ) where
 > 
+> import qualified Data.ByteString as BS
+> import qualified Data.ByteString.Char8 as BSC
 > import Data.List (intersperse, unwords)
 > import Data.Semigroup
 > import Data.String
@@ -506,6 +510,9 @@ For fun:
 > 
 >   formatPos (Pos _ offset) = unwords
 >     [ "offset", '0' : 'x' : showHex offset "" ]
+> 
+> byte :: Word8 -> Parser Word8 Word8
+> byte = token
 
 
 
@@ -649,6 +656,11 @@ For example, we can use `<?>` with `mapM` and `char` to parse specific strings w
 
 > string :: String -> Parser Char ()
 > string str = mapM_ char str <?> str
+
+Similarly, we can parse unicode characters as lists of bytes.
+
+> unicodeChar :: Char -> Parser Word8 [Word8]
+> unicodeChar c = mapM token (BS.unpack $ BSC.singleton c) <?> [c]
 
 So far we've glossed over the details of the `ParseError` type, but now it's time to unpack that. The purpose of an error type for a parser is to give human users relevant information about what went wrong. At the same time, we don't want to expect readers of the errors to know how this parsing library works, since in practice they'll be using some other tool and shouldn't need to care what parsing library it used.
 

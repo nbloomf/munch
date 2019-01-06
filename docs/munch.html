@@ -127,31 +127,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-27" data-line-number="27">  , <span class="dt">Stream</span>(), toStream, <span class="dt">Token</span>(<span class="fu">..</span>), <span class="dt">Pos</span>(<span class="fu">..</span>), <span class="dt">DidConsume</span>(<span class="fu">..</span>)</a>
 <a class="sourceLine" id="cb2-28" data-line-number="28">    <span class="co">-- * Basic Parsers</span></a>
 <a class="sourceLine" id="cb2-29" data-line-number="29">  , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed</a>
-<a class="sourceLine" id="cb2-30" data-line-number="30">  , choice, manySepBy, someSepBy, string</a>
+<a class="sourceLine" id="cb2-30" data-line-number="30">  , choice, manySepBy, someSepBy</a>
 <a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Char@</span></a>
 <a class="sourceLine" id="cb2-32" data-line-number="32">  , char, newline, spaces, decimalDigit, hexDigit</a>
-<a class="sourceLine" id="cb2-33" data-line-number="33">  , lowerLatin, upperLatin</a>
-<a class="sourceLine" id="cb2-34" data-line-number="34">    <span class="co">-- * Errors</span></a>
-<a class="sourceLine" id="cb2-35" data-line-number="35">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
-<a class="sourceLine" id="cb2-36" data-line-number="36">  , displayParseError</a>
-<a class="sourceLine" id="cb2-37" data-line-number="37">    <span class="co">-- * Indentation</span></a>
-<a class="sourceLine" id="cb2-38" data-line-number="38">  , readRef, adjustRef, localRef, consume, ignore</a>
-<a class="sourceLine" id="cb2-39" data-line-number="39">  , <span class="dt">Indentation</span>(<span class="fu">..</span>), indent</a>
-<a class="sourceLine" id="cb2-40" data-line-number="40">    <span class="co">-- ** Simple Indentation</span></a>
-<a class="sourceLine" id="cb2-41" data-line-number="41">  , wrtRef, wrtPos, <span class="dt">Endpoint</span>(<span class="fu">..</span>), <span class="dt">Relation</span>(<span class="fu">..</span>), <span class="dt">Dimension</span>(<span class="fu">..</span>)</a>
-<a class="sourceLine" id="cb2-42" data-line-number="42">    <span class="co">-- * Permutations</span></a>
-<a class="sourceLine" id="cb2-43" data-line-number="43">  , permute, permuteSepBy, permuteIndent, permuteIndentSepBy</a>
-<a class="sourceLine" id="cb2-44" data-line-number="44">  , (<span class="fu">&lt;$$&gt;</span>), (<span class="fu">&lt;&amp;&amp;&gt;</span>), (<span class="fu">&lt;$?&gt;</span>), (<span class="fu">&lt;&amp;?&gt;</span>), <span class="dt">Perms</span>()</a>
-<a class="sourceLine" id="cb2-45" data-line-number="45">) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb2-46" data-line-number="46"></a>
-<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
-<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
-<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="dt">Data.String</span></a>
-<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
-<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
-<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
-<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
-<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
+<a class="sourceLine" id="cb2-33" data-line-number="33">  , lowerLatin, upperLatin, string</a>
+<a class="sourceLine" id="cb2-34" data-line-number="34">    <span class="co">-- ** @Word8@</span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35">  , byte, unicodeChar</a>
+<a class="sourceLine" id="cb2-36" data-line-number="36">    <span class="co">-- * Errors</span></a>
+<a class="sourceLine" id="cb2-37" data-line-number="37">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
+<a class="sourceLine" id="cb2-38" data-line-number="38">  , displayParseError</a>
+<a class="sourceLine" id="cb2-39" data-line-number="39">    <span class="co">-- * Indentation</span></a>
+<a class="sourceLine" id="cb2-40" data-line-number="40">  , readRef, adjustRef, localRef, consume, ignore</a>
+<a class="sourceLine" id="cb2-41" data-line-number="41">  , <span class="dt">Indentation</span>(<span class="fu">..</span>), indent</a>
+<a class="sourceLine" id="cb2-42" data-line-number="42">    <span class="co">-- ** Simple Indentation</span></a>
+<a class="sourceLine" id="cb2-43" data-line-number="43">  , wrtRef, wrtPos, <span class="dt">Endpoint</span>(<span class="fu">..</span>), <span class="dt">Relation</span>(<span class="fu">..</span>), <span class="dt">Dimension</span>(<span class="fu">..</span>)</a>
+<a class="sourceLine" id="cb2-44" data-line-number="44">    <span class="co">-- * Permutations</span></a>
+<a class="sourceLine" id="cb2-45" data-line-number="45">  , permute, permuteSepBy, permuteIndent, permuteIndentSepBy</a>
+<a class="sourceLine" id="cb2-46" data-line-number="46">  , (<span class="fu">&lt;$$&gt;</span>), (<span class="fu">&lt;&amp;&amp;&gt;</span>), (<span class="fu">&lt;$?&gt;</span>), (<span class="fu">&lt;&amp;?&gt;</span>), <span class="dt">Perms</span>()</a>
+<a class="sourceLine" id="cb2-47" data-line-number="47">) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb2-48" data-line-number="48"></a>
+<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString</span> <span class="kw">as</span> <span class="dt">BS</span></a>
+<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">BSC</span></a>
+<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
+<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
+<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="dt">Data.String</span></a>
+<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
+<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
+<a class="sourceLine" id="cb2-56" data-line-number="56"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
+<a class="sourceLine" id="cb2-57" data-line-number="57"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
+<a class="sourceLine" id="cb2-58" data-line-number="58"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
 <h2 id="contents">Contents</h2>
 <ul>
 <li>The Library
@@ -507,7 +511,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb25-4" data-line-number="4">  initPos <span class="fu">=</span> <span class="dt">Pos</span> <span class="dv">0</span> <span class="dv">0</span></a>
 <a class="sourceLine" id="cb25-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb25-6" data-line-number="6">  formatPos (<span class="dt">Pos</span> _ offset) <span class="fu">=</span> unwords</a>
-<a class="sourceLine" id="cb25-7" data-line-number="7">    [ <span class="st">&quot;offset&quot;</span>, <span class="ch">&#39;0&#39;</span> <span class="fu">:</span> <span class="ch">&#39;x&#39;</span> <span class="fu">:</span> showHex offset <span class="st">&quot;&quot;</span> ]</a></code></pre></div>
+<a class="sourceLine" id="cb25-7" data-line-number="7">    [ <span class="st">&quot;offset&quot;</span>, <span class="ch">&#39;0&#39;</span> <span class="fu">:</span> <span class="ch">&#39;x&#39;</span> <span class="fu">:</span> showHex offset <span class="st">&quot;&quot;</span> ]</a>
+<a class="sourceLine" id="cb25-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="ot">byte ::</span> <span class="dt">Word8</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> <span class="dt">Word8</span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10">byte <span class="fu">=</span> token</a></code></pre></div>
 <h2 id="derived-combinators">Derived Combinators</h2>
 <p>Several handy combinators can be defined in terms of the applicative and monad interfaces.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co">-- | Tries the argument parsers one at a time in order,</span></a>
@@ -621,401 +628,384 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>For example, we can use <code>&lt;?&gt;</code> with <code>mapM</code> and <code>char</code> to parse specific strings with a better error message.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="ot">string ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Char</span> ()</a>
 <a class="sourceLine" id="cb33-2" data-line-number="2">string str <span class="fu">=</span> mapM_ char str <span class="fu">&lt;?&gt;</span> str</a></code></pre></div>
+<p>Similarly, we can parse unicode characters as lists of bytes.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="ot">unicodeChar ::</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> [<span class="dt">Word8</span>]</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">unicodeChar c <span class="fu">=</span> mapM token (BS.unpack <span class="fu">$</span> BSC.singleton c) <span class="fu">&lt;?&gt;</span> [c]</a></code></pre></div>
 <p>So far we’ve glossed over the details of the <code>ParseError</code> type, but now it’s time to unpack that. The purpose of an error type for a parser is to give human users relevant information about what went wrong. At the same time, we don’t want to expect readers of the errors to know how this parsing library works, since in practice they’ll be using some other tool and shouldn’t need to care what parsing library it used.</p>
 <p>Our errors so far have been pretty simple. We have some <em>basic</em> errors, including those about unexpected characters and indentation. We also have a couple of <em>compound</em> errors, like the unexplained <code>Because</code> and <code>OneOf</code> and whatever is happening inside the implementation of <code>&lt;|&gt;</code>. The compound errors come in two flavors. In <code>&lt;|&gt;</code> we have two errors and want to report that both occurred; this takes two errors and mushes them into one. In <code>&lt;?&gt;</code> and <code>wouldSucceed</code> we have an error but want to annotate it with some extra information. This takes an error and an annotation and produces an error.</p>
 <p>This looks like a free algebra, in the universal algebra sense. We have a set of atoms (the basic errors) and some operations (mushing and annotation) and want to construct the “smallest” type that is closed under them. Assume for the moment that “mushing” (combining errors as in <code>&lt;|&gt;</code>) has to be associative – which it does, by the alternative functor laws. Then what we have is a free monoid on the basic errors (under mush) being acted on freely by the set of annotations. (!!!)</p>
 <p>We can model this algebra with the following type; <code>a</code> is the type of annotations and <code>e</code> the type of basic errors.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="co">-- | Structured error type.</span></a>
-<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="kw">data</span> <span class="dt">Error</span> a e</a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="fu">=</span> <span class="dt">OneOf</span> [<span class="dt">Error</span> a e]     <span class="co">-- ^ List of failure reasons</span></a>
-<a class="sourceLine" id="cb34-4" data-line-number="4">  <span class="fu">|</span> <span class="dt">Because</span> a (<span class="dt">Error</span> a e) <span class="co">-- ^ Annotated failure</span></a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">Simply</span> e              <span class="co">-- ^ Simple failure</span></a>
-<a class="sourceLine" id="cb34-6" data-line-number="6">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="co">-- | Structured error type.</span></a>
+<a class="sourceLine" id="cb35-2" data-line-number="2"><span class="kw">data</span> <span class="dt">Error</span> a e</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">  <span class="fu">=</span> <span class="dt">OneOf</span> [<span class="dt">Error</span> a e]     <span class="co">-- ^ List of failure reasons</span></a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">  <span class="fu">|</span> <span class="dt">Because</span> a (<span class="dt">Error</span> a e) <span class="co">-- ^ Annotated failure</span></a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">Simply</span> e              <span class="co">-- ^ Simple failure</span></a>
+<a class="sourceLine" id="cb35-6" data-line-number="6">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
 <p>We can make <code>Error a e</code> a monoid, where <code>OneOf []</code> is the identity. Multiplication is <em>almost</em> concatenation; recall that the free monoid on <code>a</code> is the type of lists of <code>a</code>, and multiplication is just concat. The annotations make this a little more complicated for <code>Error a e</code>.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="co">-- | @Error a e@ is a free monoid over @e@ being acted on</span></a>
-<a class="sourceLine" id="cb35-2" data-line-number="2"><span class="co">--   freely by @a@.</span></a>
-<a class="sourceLine" id="cb35-3" data-line-number="3"><span class="kw">instance</span> <span class="dt">Semigroup</span> (<span class="dt">Error</span> a e) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb35-4" data-line-number="4">  (<span class="dt">OneOf</span> es1) <span class="fu">&lt;&gt;</span> (<span class="dt">OneOf</span> es2) <span class="fu">=</span> <span class="dt">OneOf</span> (es1 <span class="fu">++</span> es2)</a>
-<a class="sourceLine" id="cb35-5" data-line-number="5">  (<span class="dt">OneOf</span> es1) <span class="fu">&lt;&gt;</span> y           <span class="fu">=</span> <span class="kw">case</span> es1 <span class="kw">of</span></a>
-<a class="sourceLine" id="cb35-6" data-line-number="6">                                 [] <span class="ot">-&gt;</span> y</a>
-<a class="sourceLine" id="cb35-7" data-line-number="7">                                 _  <span class="ot">-&gt;</span> <span class="dt">OneOf</span> <span class="fu">$</span> es1 <span class="fu">++</span> [y]</a>
-<a class="sourceLine" id="cb35-8" data-line-number="8">  x           <span class="fu">&lt;&gt;</span> (<span class="dt">OneOf</span> es2) <span class="fu">=</span> <span class="kw">case</span> es2 <span class="kw">of</span></a>
-<a class="sourceLine" id="cb35-9" data-line-number="9">                                 [] <span class="ot">-&gt;</span> x</a>
-<a class="sourceLine" id="cb35-10" data-line-number="10">                                 _  <span class="ot">-&gt;</span> <span class="dt">OneOf</span> <span class="fu">$</span> [x] <span class="fu">++</span> es2</a>
-<a class="sourceLine" id="cb35-11" data-line-number="11">  x           <span class="fu">&lt;&gt;</span> y           <span class="fu">=</span> <span class="dt">OneOf</span> [x,y]</a>
-<a class="sourceLine" id="cb35-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb35-13" data-line-number="13"><span class="kw">instance</span> <span class="dt">Monoid</span> (<span class="dt">Error</span> a e) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb35-14" data-line-number="14">  mempty  <span class="fu">=</span> <span class="dt">OneOf</span> []</a>
-<a class="sourceLine" id="cb35-15" data-line-number="15">  mappend <span class="fu">=</span> (<span class="fu">&lt;&gt;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="co">-- | @Error a e@ is a free monoid over @e@ being acted on</span></a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"><span class="co">--   freely by @a@.</span></a>
+<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="kw">instance</span> <span class="dt">Semigroup</span> (<span class="dt">Error</span> a e) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">  (<span class="dt">OneOf</span> es1) <span class="fu">&lt;&gt;</span> (<span class="dt">OneOf</span> es2) <span class="fu">=</span> <span class="dt">OneOf</span> (es1 <span class="fu">++</span> es2)</a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">  (<span class="dt">OneOf</span> es1) <span class="fu">&lt;&gt;</span> y           <span class="fu">=</span> <span class="kw">case</span> es1 <span class="kw">of</span></a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">                                 [] <span class="ot">-&gt;</span> y</a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">                                 _  <span class="ot">-&gt;</span> <span class="dt">OneOf</span> <span class="fu">$</span> es1 <span class="fu">++</span> [y]</a>
+<a class="sourceLine" id="cb36-8" data-line-number="8">  x           <span class="fu">&lt;&gt;</span> (<span class="dt">OneOf</span> es2) <span class="fu">=</span> <span class="kw">case</span> es2 <span class="kw">of</span></a>
+<a class="sourceLine" id="cb36-9" data-line-number="9">                                 [] <span class="ot">-&gt;</span> x</a>
+<a class="sourceLine" id="cb36-10" data-line-number="10">                                 _  <span class="ot">-&gt;</span> <span class="dt">OneOf</span> <span class="fu">$</span> [x] <span class="fu">++</span> es2</a>
+<a class="sourceLine" id="cb36-11" data-line-number="11">  x           <span class="fu">&lt;&gt;</span> y           <span class="fu">=</span> <span class="dt">OneOf</span> [x,y]</a>
+<a class="sourceLine" id="cb36-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb36-13" data-line-number="13"><span class="kw">instance</span> <span class="dt">Monoid</span> (<span class="dt">Error</span> a e) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb36-14" data-line-number="14">  mempty  <span class="fu">=</span> <span class="dt">OneOf</span> []</a>
+<a class="sourceLine" id="cb36-15" data-line-number="15">  mappend <span class="fu">=</span> (<span class="fu">&lt;&gt;</span>)</a></code></pre></div>
 <p>Now the basic errors are just a roster of the bad things that can happen when we pop a <code>Char</code> from the stream, or look at the reference position (to be discussed later).</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="co">-- | Low-level reasons why a parse can fail.</span></a>
-<a class="sourceLine" id="cb36-2" data-line-number="2"><span class="kw">data</span> <span class="dt">BasicError</span> t</a>
-<a class="sourceLine" id="cb36-3" data-line-number="3">  <span class="fu">=</span> <span class="dt">UnexpectedEOF</span> (<span class="dt">Either</span> <span class="dt">String</span> (<span class="dt">Maybe</span> t))</a>
-<a class="sourceLine" id="cb36-4" data-line-number="4">  <span class="fu">|</span> <span class="dt">UnexpectedToken</span> t (<span class="dt">Maybe</span> t) (<span class="dt">Pos</span> t)</a>
-<a class="sourceLine" id="cb36-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">UnexpectedSatisfy</span> t <span class="dt">String</span> (<span class="dt">Pos</span> t)</a>
-<a class="sourceLine" id="cb36-6" data-line-number="6">  <span class="fu">|</span> <span class="dt">UnexpectedIndentation</span> <span class="dt">String</span> (<span class="dt">Pos</span> t, <span class="dt">Pos</span> t)</a>
-<a class="sourceLine" id="cb36-7" data-line-number="7">  <span class="fu">|</span> <span class="dt">UnexpectedSuccess</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
-<a class="sourceLine" id="cb36-8" data-line-number="8">  <span class="fu">|</span> <span class="dt">UnexpectedDecline</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
-<a class="sourceLine" id="cb36-9" data-line-number="9">  <span class="fu">|</span> <span class="dt">ExpectedBOF</span> (<span class="dt">Pos</span> t)</a>
-<a class="sourceLine" id="cb36-10" data-line-number="10">  <span class="fu">|</span> <span class="dt">IncompleteParse</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
-<a class="sourceLine" id="cb36-11" data-line-number="11">  <span class="fu">|</span> <span class="dt">Failure</span> <span class="dt">String</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
-<a class="sourceLine" id="cb36-12" data-line-number="12">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="co">-- | Low-level reasons why a parse can fail.</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2"><span class="kw">data</span> <span class="dt">BasicError</span> t</a>
+<a class="sourceLine" id="cb37-3" data-line-number="3">  <span class="fu">=</span> <span class="dt">UnexpectedEOF</span> (<span class="dt">Either</span> <span class="dt">String</span> (<span class="dt">Maybe</span> t))</a>
+<a class="sourceLine" id="cb37-4" data-line-number="4">  <span class="fu">|</span> <span class="dt">UnexpectedToken</span> t (<span class="dt">Maybe</span> t) (<span class="dt">Pos</span> t)</a>
+<a class="sourceLine" id="cb37-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">UnexpectedSatisfy</span> t <span class="dt">String</span> (<span class="dt">Pos</span> t)</a>
+<a class="sourceLine" id="cb37-6" data-line-number="6">  <span class="fu">|</span> <span class="dt">UnexpectedIndentation</span> <span class="dt">String</span> (<span class="dt">Pos</span> t, <span class="dt">Pos</span> t)</a>
+<a class="sourceLine" id="cb37-7" data-line-number="7">  <span class="fu">|</span> <span class="dt">UnexpectedSuccess</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
+<a class="sourceLine" id="cb37-8" data-line-number="8">  <span class="fu">|</span> <span class="dt">UnexpectedDecline</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
+<a class="sourceLine" id="cb37-9" data-line-number="9">  <span class="fu">|</span> <span class="dt">ExpectedBOF</span> (<span class="dt">Pos</span> t)</a>
+<a class="sourceLine" id="cb37-10" data-line-number="10">  <span class="fu">|</span> <span class="dt">IncompleteParse</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
+<a class="sourceLine" id="cb37-11" data-line-number="11">  <span class="fu">|</span> <span class="dt">Failure</span> <span class="dt">String</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))</a>
+<a class="sourceLine" id="cb37-12" data-line-number="12">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
 <p>Our annotations come in a couple of flavors.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="co">-- | Represents a reason why a parse failed, above</span></a>
-<a class="sourceLine" id="cb37-2" data-line-number="2"><span class="co">--   the level of unexpected character or EOF.</span></a>
-<a class="sourceLine" id="cb37-3" data-line-number="3"><span class="kw">data</span> <span class="dt">Annotation</span> t</a>
-<a class="sourceLine" id="cb37-4" data-line-number="4">  <span class="fu">=</span> <span class="dt">Note</span> <span class="dt">String</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))   <span class="co">-- ^ Comes from @\&lt;?&gt;@</span></a>
-<a class="sourceLine" id="cb37-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">Lookahead</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))     <span class="co">-- ^ Comes from @wouldFail@</span></a>
-<a class="sourceLine" id="cb37-6" data-line-number="6">  <span class="fu">|</span> <span class="dt">DeclineReason</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t)) <span class="co">-- ^ Comes from @consume@</span></a>
-<a class="sourceLine" id="cb37-7" data-line-number="7">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="co">-- | Represents a reason why a parse failed, above</span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="co">--   the level of unexpected character or EOF.</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3"><span class="kw">data</span> <span class="dt">Annotation</span> t</a>
+<a class="sourceLine" id="cb38-4" data-line-number="4">  <span class="fu">=</span> <span class="dt">Note</span> <span class="dt">String</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))   <span class="co">-- ^ Comes from @\&lt;?&gt;@</span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">  <span class="fu">|</span> <span class="dt">Lookahead</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t))     <span class="co">-- ^ Comes from @wouldFail@</span></a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">  <span class="fu">|</span> <span class="dt">DeclineReason</span> (<span class="dt">Maybe</span> (<span class="dt">Pos</span> t)) <span class="co">-- ^ Comes from @consume@</span></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
 <p>So the <code>ParseError</code> type looks like this:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="co">-- | Synonym for the type of trees of parse errors.</span></a>
-<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="kw">type</span> <span class="dt">ParseError</span> t <span class="fu">=</span> <span class="dt">Error</span> (<span class="dt">Annotation</span> t) (<span class="dt">BasicError</span> t)</a></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="co">-- | Synonym for the type of trees of parse errors.</span></a>
+<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="kw">type</span> <span class="dt">ParseError</span> t <span class="fu">=</span> <span class="dt">Error</span> (<span class="dt">Annotation</span> t) (<span class="dt">BasicError</span> t)</a></code></pre></div>
 <p><code>ParseError</code> values are essentially trees, and this structure means they can be very precise.</p>
 <h2 id="permutation-phrases">Permutation Phrases</h2>
 <p>A <em>permutation phrase</em> is a list of words that can be in any order without changing the meaning of the phrase. These phrases are interesting for parsers because they show up in lots of places – command line arguments, JSON data, and HTML attributes are three examples – but can be awkward to handle. The paper <em>Parsing Permutation Phrases</em> has a very nice approach to parsing permutation phrases with combinators, and can even deal with optional items. We’ll follow along with that paper and with its implementation in Parsec to get similar functionality here. The amount of code needed to do this is surprisingly small, though it does use the <code>ExistentialQuantification</code> language extension.</p>
 <p>This approach uses a tree of all possible orderings of a list of parsers, which is exponential in size, but uses lazy evaluation to aggressively prune this tree so that only a quadratic amount of it is actually constructed.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="co">-- | Opaque type representing a parser for permutation</span></a>
-<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="co">--   phrases. To construct values of this type, see</span></a>
-<a class="sourceLine" id="cb39-3" data-line-number="3"><span class="co">--   @\&lt;$$&gt;@, @\&lt;$?&gt;@, @\&lt;&amp;&amp;&gt;@, and @\&lt;&amp;?&gt;@.</span></a>
-<a class="sourceLine" id="cb39-4" data-line-number="4"><span class="kw">data</span> <span class="dt">Perms</span> t a</a>
-<a class="sourceLine" id="cb39-5" data-line-number="5">  <span class="fu">=</span> <span class="dt">Perms</span> (<span class="dt">Maybe</span> a) [<span class="dt">Branch</span> t a]</a>
-<a class="sourceLine" id="cb39-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb39-7" data-line-number="7"><span class="kw">data</span> <span class="dt">Branch</span> t a</a>
-<a class="sourceLine" id="cb39-8" data-line-number="8">  <span class="fu">=</span> forall x<span class="fu">.</span> <span class="dt">Branch</span> (<span class="dt">Perms</span> t (x <span class="ot">-&gt;</span> a)) (<span class="dt">Parser</span> t x)</a>
-<a class="sourceLine" id="cb39-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb39-10" data-line-number="10"><span class="ot">perm ::</span> a <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a</a>
-<a class="sourceLine" id="cb39-11" data-line-number="11">perm a <span class="fu">=</span> <span class="dt">Perms</span> (<span class="dt">Just</span> a) []</a></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="co">-- | Opaque type representing a parser for permutation</span></a>
+<a class="sourceLine" id="cb40-2" data-line-number="2"><span class="co">--   phrases. To construct values of this type, see</span></a>
+<a class="sourceLine" id="cb40-3" data-line-number="3"><span class="co">--   @\&lt;$$&gt;@, @\&lt;$?&gt;@, @\&lt;&amp;&amp;&gt;@, and @\&lt;&amp;?&gt;@.</span></a>
+<a class="sourceLine" id="cb40-4" data-line-number="4"><span class="kw">data</span> <span class="dt">Perms</span> t a</a>
+<a class="sourceLine" id="cb40-5" data-line-number="5">  <span class="fu">=</span> <span class="dt">Perms</span> (<span class="dt">Maybe</span> a) [<span class="dt">Branch</span> t a]</a>
+<a class="sourceLine" id="cb40-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb40-7" data-line-number="7"><span class="kw">data</span> <span class="dt">Branch</span> t a</a>
+<a class="sourceLine" id="cb40-8" data-line-number="8">  <span class="fu">=</span> forall x<span class="fu">.</span> <span class="dt">Branch</span> (<span class="dt">Perms</span> t (x <span class="ot">-&gt;</span> a)) (<span class="dt">Parser</span> t x)</a>
+<a class="sourceLine" id="cb40-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb40-10" data-line-number="10"><span class="ot">perm ::</span> a <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a</a>
+<a class="sourceLine" id="cb40-11" data-line-number="11">perm a <span class="fu">=</span> <span class="dt">Perms</span> (<span class="dt">Just</span> a) []</a></code></pre></div>
 <p>I’m 95% sure these <code>Functor</code> instances are legitimate, although the Parsec authors use ad-hoc functions instead of <code>fmap</code>. I’m not sure why.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Perms</span> t) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb40-2" data-line-number="2">  fmap f (<span class="dt">Perms</span> x xs) <span class="fu">=</span></a>
-<a class="sourceLine" id="cb40-3" data-line-number="3">    <span class="dt">Perms</span> (fmap f x) (map (fmap f) xs)</a>
-<a class="sourceLine" id="cb40-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb40-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Branch</span> t) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb40-6" data-line-number="6">  fmap f (<span class="dt">Branch</span> t p) <span class="fu">=</span> <span class="dt">Branch</span> (fmap (f <span class="fu">.</span>) t) p</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Perms</span> t) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb41-2" data-line-number="2">  fmap f (<span class="dt">Perms</span> x xs) <span class="fu">=</span></a>
+<a class="sourceLine" id="cb41-3" data-line-number="3">    <span class="dt">Perms</span> (fmap f x) (map (fmap f) xs)</a>
+<a class="sourceLine" id="cb41-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb41-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Branch</span> t) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb41-6" data-line-number="6">  fmap f (<span class="dt">Branch</span> t p) <span class="fu">=</span> <span class="dt">Branch</span> (fmap (f <span class="fu">.</span>) t) p</a></code></pre></div>
 <p>We have a mini-DSL for building permutation parsers consisting of four combinators: <code>&lt;$$&gt;</code>, <code>&lt;$?&gt;</code>, <code>&lt;&amp;&amp;&gt;</code>, and <code>&lt;&amp;?&gt;</code>. To use these we need a single function accepting one or more arguments that we want to parse in any order. Then we list out the parsers for each argument, prefixing with <code>&lt;&amp;&amp;&gt;</code> (if the argument is required) or <code>&lt;&amp;?&gt;</code> (if the argument is optional). The first argument is prefixed with <code>&lt;$$&gt;</code> or <code>&lt;$?&gt;</code>. (This sort of mimics the <code>Applicative</code> style.)</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="co">-- | Append a required term to a permutation phrase.</span></a>
-<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="ot">(&lt;&amp;&amp;&gt;) ::</span> <span class="dt">Perms</span> t (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
-<a class="sourceLine" id="cb41-3" data-line-number="3">t<span class="fu">@</span>(<span class="dt">Perms</span> u bs) <span class="fu">&lt;&amp;&amp;&gt;</span> p <span class="fu">=</span></a>
-<a class="sourceLine" id="cb41-4" data-line-number="4">  <span class="dt">Perms</span> <span class="dt">Nothing</span> <span class="fu">$</span> (<span class="dt">Branch</span> t p) <span class="fu">:</span> map insert bs</a>
-<a class="sourceLine" id="cb41-5" data-line-number="5">    <span class="kw">where</span></a>
-<a class="sourceLine" id="cb41-6" data-line-number="6">      insert (<span class="dt">Branch</span> w q) <span class="fu">=</span> <span class="dt">Branch</span> ((fmap flip w) <span class="fu">&lt;&amp;&amp;&gt;</span> p) q</a>
-<a class="sourceLine" id="cb41-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb41-8" data-line-number="8"><span class="co">-- | Start a permutation phrase with a required term.</span></a>
-<a class="sourceLine" id="cb41-9" data-line-number="9"><span class="ot">(&lt;$$&gt;) ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
-<a class="sourceLine" id="cb41-10" data-line-number="10">f <span class="fu">&lt;$$&gt;</span> p <span class="fu">=</span> perm f <span class="fu">&lt;&amp;&amp;&gt;</span> p</a>
-<a class="sourceLine" id="cb41-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb41-12" data-line-number="12"><span class="co">-- | Append an optional term to a permutation phrase.</span></a>
-<a class="sourceLine" id="cb41-13" data-line-number="13"><span class="ot">(&lt;&amp;?&gt;) ::</span> <span class="dt">Perms</span> t (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a, <span class="dt">Parser</span> t a) <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
-<a class="sourceLine" id="cb41-14" data-line-number="14">t<span class="fu">@</span>(<span class="dt">Perms</span> u bs) <span class="fu">&lt;&amp;?&gt;</span> (x,p) <span class="fu">=</span></a>
-<a class="sourceLine" id="cb41-15" data-line-number="15">  <span class="dt">Perms</span> (fmap (<span class="fu">$</span> x) u) <span class="fu">$</span> (<span class="dt">Branch</span> t p) <span class="fu">:</span> map insert bs</a>
-<a class="sourceLine" id="cb41-16" data-line-number="16">    <span class="kw">where</span></a>
-<a class="sourceLine" id="cb41-17" data-line-number="17">      insert (<span class="dt">Branch</span> w q) <span class="fu">=</span> <span class="dt">Branch</span> ((fmap flip w) <span class="fu">&lt;&amp;?&gt;</span> (x,p)) q</a>
-<a class="sourceLine" id="cb41-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb41-19" data-line-number="19"><span class="co">-- | Start a permutation phrase with an optional term.</span></a>
-<a class="sourceLine" id="cb41-20" data-line-number="20"><span class="ot">(&lt;$?&gt;) ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a, <span class="dt">Parser</span> t a) <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
-<a class="sourceLine" id="cb41-21" data-line-number="21">f <span class="fu">&lt;$?&gt;</span> (x,p) <span class="fu">=</span> perm f <span class="fu">&lt;&amp;?&gt;</span> (x,p)</a>
-<a class="sourceLine" id="cb41-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb41-23" data-line-number="23"><span class="kw">infixl</span> <span class="dv">1</span> <span class="fu">&lt;&amp;&amp;&gt;</span>, <span class="fu">&lt;&amp;?&gt;</span></a>
-<a class="sourceLine" id="cb41-24" data-line-number="24"><span class="kw">infixl</span> <span class="dv">2</span> <span class="fu">&lt;$$&gt;</span>, <span class="fu">&lt;$?&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="co">-- | Append a required term to a permutation phrase.</span></a>
+<a class="sourceLine" id="cb42-2" data-line-number="2"><span class="ot">(&lt;&amp;&amp;&gt;) ::</span> <span class="dt">Perms</span> t (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
+<a class="sourceLine" id="cb42-3" data-line-number="3">t<span class="fu">@</span>(<span class="dt">Perms</span> u bs) <span class="fu">&lt;&amp;&amp;&gt;</span> p <span class="fu">=</span></a>
+<a class="sourceLine" id="cb42-4" data-line-number="4">  <span class="dt">Perms</span> <span class="dt">Nothing</span> <span class="fu">$</span> (<span class="dt">Branch</span> t p) <span class="fu">:</span> map insert bs</a>
+<a class="sourceLine" id="cb42-5" data-line-number="5">    <span class="kw">where</span></a>
+<a class="sourceLine" id="cb42-6" data-line-number="6">      insert (<span class="dt">Branch</span> w q) <span class="fu">=</span> <span class="dt">Branch</span> ((fmap flip w) <span class="fu">&lt;&amp;&amp;&gt;</span> p) q</a>
+<a class="sourceLine" id="cb42-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb42-8" data-line-number="8"><span class="co">-- | Start a permutation phrase with a required term.</span></a>
+<a class="sourceLine" id="cb42-9" data-line-number="9"><span class="ot">(&lt;$$&gt;) ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
+<a class="sourceLine" id="cb42-10" data-line-number="10">f <span class="fu">&lt;$$&gt;</span> p <span class="fu">=</span> perm f <span class="fu">&lt;&amp;&amp;&gt;</span> p</a>
+<a class="sourceLine" id="cb42-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb42-12" data-line-number="12"><span class="co">-- | Append an optional term to a permutation phrase.</span></a>
+<a class="sourceLine" id="cb42-13" data-line-number="13"><span class="ot">(&lt;&amp;?&gt;) ::</span> <span class="dt">Perms</span> t (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a, <span class="dt">Parser</span> t a) <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
+<a class="sourceLine" id="cb42-14" data-line-number="14">t<span class="fu">@</span>(<span class="dt">Perms</span> u bs) <span class="fu">&lt;&amp;?&gt;</span> (x,p) <span class="fu">=</span></a>
+<a class="sourceLine" id="cb42-15" data-line-number="15">  <span class="dt">Perms</span> (fmap (<span class="fu">$</span> x) u) <span class="fu">$</span> (<span class="dt">Branch</span> t p) <span class="fu">:</span> map insert bs</a>
+<a class="sourceLine" id="cb42-16" data-line-number="16">    <span class="kw">where</span></a>
+<a class="sourceLine" id="cb42-17" data-line-number="17">      insert (<span class="dt">Branch</span> w q) <span class="fu">=</span> <span class="dt">Branch</span> ((fmap flip w) <span class="fu">&lt;&amp;?&gt;</span> (x,p)) q</a>
+<a class="sourceLine" id="cb42-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb42-19" data-line-number="19"><span class="co">-- | Start a permutation phrase with an optional term.</span></a>
+<a class="sourceLine" id="cb42-20" data-line-number="20"><span class="ot">(&lt;$?&gt;) ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a, <span class="dt">Parser</span> t a) <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b</a>
+<a class="sourceLine" id="cb42-21" data-line-number="21">f <span class="fu">&lt;$?&gt;</span> (x,p) <span class="fu">=</span> perm f <span class="fu">&lt;&amp;?&gt;</span> (x,p)</a>
+<a class="sourceLine" id="cb42-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb42-23" data-line-number="23"><span class="kw">infixl</span> <span class="dv">1</span> <span class="fu">&lt;&amp;&amp;&gt;</span>, <span class="fu">&lt;&amp;?&gt;</span></a>
+<a class="sourceLine" id="cb42-24" data-line-number="24"><span class="kw">infixl</span> <span class="dv">2</span> <span class="fu">&lt;$$&gt;</span>, <span class="fu">&lt;$?&gt;</span></a></code></pre></div>
 <p>Once we’ve constructed a permutation phrase, we can convert it to a normal parser with <code>permute</code>.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="co">-- | Convert a permutation phrase to a @Parser@.</span></a>
-<a class="sourceLine" id="cb42-2" data-line-number="2"><span class="ot">permute ::</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
-<a class="sourceLine" id="cb42-3" data-line-number="3">permute (<span class="dt">Perms</span> u bs) <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
-<a class="sourceLine" id="cb42-4" data-line-number="4">  <span class="kw">where</span></a>
-<a class="sourceLine" id="cb42-5" data-line-number="5">    nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
-<a class="sourceLine" id="cb42-6" data-line-number="6">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb42-7" data-line-number="7">      <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
-<a class="sourceLine" id="cb42-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb42-9" data-line-number="9">    branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb42-10" data-line-number="10">      x <span class="ot">&lt;-</span> p</a>
-<a class="sourceLine" id="cb42-11" data-line-number="11">      f <span class="ot">&lt;-</span> permute w</a>
-<a class="sourceLine" id="cb42-12" data-line-number="12">      return (f x)</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="co">-- | Convert a permutation phrase to a @Parser@.</span></a>
+<a class="sourceLine" id="cb43-2" data-line-number="2"><span class="ot">permute ::</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
+<a class="sourceLine" id="cb43-3" data-line-number="3">permute (<span class="dt">Perms</span> u bs) <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
+<a class="sourceLine" id="cb43-4" data-line-number="4">  <span class="kw">where</span></a>
+<a class="sourceLine" id="cb43-5" data-line-number="5">    nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
+<a class="sourceLine" id="cb43-6" data-line-number="6">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb43-7" data-line-number="7">      <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
+<a class="sourceLine" id="cb43-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb43-9" data-line-number="9">    branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb43-10" data-line-number="10">      x <span class="ot">&lt;-</span> p</a>
+<a class="sourceLine" id="cb43-11" data-line-number="11">      f <span class="ot">&lt;-</span> permute w</a>
+<a class="sourceLine" id="cb43-12" data-line-number="12">      return (f x)</a></code></pre></div>
 <p>Another common situation is that we want terms to be permutable but also separated by a fixed delimiter, like a comma. I’m pretty sure we can’t do this in terms of <code>permute</code> and the other combinators, so we’ll provide a combinator for it here.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="co">-- | Convert a permutation phrase to a @Parser@, with</span></a>
-<a class="sourceLine" id="cb43-2" data-line-number="2"><span class="co">--   terms separated by @psep@.</span></a>
-<a class="sourceLine" id="cb43-3" data-line-number="3"><span class="ot">permuteSepBy ::</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
-<a class="sourceLine" id="cb43-4" data-line-number="4">permuteSepBy <span class="fu">=</span> psep (pure ())</a>
-<a class="sourceLine" id="cb43-5" data-line-number="5">  <span class="kw">where</span></a>
-<a class="sourceLine" id="cb43-6" data-line-number="6">    psep</a>
-<a class="sourceLine" id="cb43-7" data-line-number="7"><span class="ot">      ::</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb43-8" data-line-number="8">      <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
-<a class="sourceLine" id="cb43-9" data-line-number="9">    psep init sep (<span class="dt">Perms</span> u bs)</a>
-<a class="sourceLine" id="cb43-10" data-line-number="10">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
-<a class="sourceLine" id="cb43-11" data-line-number="11">      <span class="kw">where</span></a>
-<a class="sourceLine" id="cb43-12" data-line-number="12">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
-<a class="sourceLine" id="cb43-13" data-line-number="13">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb43-14" data-line-number="14">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
-<a class="sourceLine" id="cb43-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb43-16" data-line-number="16">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb43-17" data-line-number="17">          init</a>
-<a class="sourceLine" id="cb43-18" data-line-number="18">          x <span class="ot">&lt;-</span> p</a>
-<a class="sourceLine" id="cb43-19" data-line-number="19">          f <span class="ot">&lt;-</span> psep sep sep w</a>
-<a class="sourceLine" id="cb43-20" data-line-number="20">          return (f x)</a></code></pre></div>
-<p>Likewise there are cases where the indentation of items 2 through n in the permuted list depend on the indentation of item 1. For instance, the items in the list should be indented to the same column, but we don’t know <em>which</em> column until the first item is parsed. We can’t do this in terms of <code>permute</code> and the other combinators, so we’ll provide it here.</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="co">-- | Convert a permutation phrase to a @Parser@, with</span></a>
-<a class="sourceLine" id="cb44-2" data-line-number="2"><span class="co">--   all terms indented with respect to the start</span></a>
-<a class="sourceLine" id="cb44-3" data-line-number="3"><span class="co">--   position of the first.</span></a>
-<a class="sourceLine" id="cb44-4" data-line-number="4">permuteIndent</a>
-<a class="sourceLine" id="cb44-5" data-line-number="5"><span class="ot">  ::</span> forall t a<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb44-6" data-line-number="6">  <span class="ot">=&gt;</span> <span class="dt">Indentation</span> t <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
-<a class="sourceLine" id="cb44-7" data-line-number="7">permuteIndent ind <span class="fu">=</span> pind</a>
-<a class="sourceLine" id="cb44-8" data-line-number="8">  <span class="kw">where</span></a>
-<a class="sourceLine" id="cb44-9" data-line-number="9">    pind</a>
-<a class="sourceLine" id="cb44-10" data-line-number="10"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb44-11" data-line-number="11">      <span class="ot">=&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
-<a class="sourceLine" id="cb44-12" data-line-number="12">    pind (<span class="dt">Perms</span> u bs)</a>
-<a class="sourceLine" id="cb44-13" data-line-number="13">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
-<a class="sourceLine" id="cb44-14" data-line-number="14">      <span class="kw">where</span></a>
-<a class="sourceLine" id="cb44-15" data-line-number="15">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
-<a class="sourceLine" id="cb44-16" data-line-number="16">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb44-17" data-line-number="17">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
-<a class="sourceLine" id="cb44-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb44-19" data-line-number="19">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb44-20" data-line-number="20">          (x,(u,_)) <span class="ot">&lt;-</span> consume p</a>
-<a class="sourceLine" id="cb44-21" data-line-number="21">          f <span class="ot">&lt;-</span> localRef u <span class="fu">$</span> indent ind <span class="fu">$</span> pind2 w</a>
-<a class="sourceLine" id="cb44-22" data-line-number="22">          return (f x)</a>
-<a class="sourceLine" id="cb44-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb44-24" data-line-number="24">    pind2</a>
-<a class="sourceLine" id="cb44-25" data-line-number="25"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb44-26" data-line-number="26">      <span class="ot">=&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
-<a class="sourceLine" id="cb44-27" data-line-number="27">    pind2 (<span class="dt">Perms</span> u bs)</a>
-<a class="sourceLine" id="cb44-28" data-line-number="28">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
-<a class="sourceLine" id="cb44-29" data-line-number="29">      <span class="kw">where</span></a>
-<a class="sourceLine" id="cb44-30" data-line-number="30">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
-<a class="sourceLine" id="cb44-31" data-line-number="31">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb44-32" data-line-number="32">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
-<a class="sourceLine" id="cb44-33" data-line-number="33"></a>
-<a class="sourceLine" id="cb44-34" data-line-number="34">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb44-35" data-line-number="35">          x <span class="ot">&lt;-</span> p</a>
-<a class="sourceLine" id="cb44-36" data-line-number="36">          f <span class="ot">&lt;-</span> pind2 w</a>
-<a class="sourceLine" id="cb44-37" data-line-number="37">          return (f x)</a></code></pre></div>
-<p>Finally, combining indentation with an item separator.</p>
+<a class="sourceLine" id="cb44-2" data-line-number="2"><span class="co">--   terms separated by @psep@.</span></a>
+<a class="sourceLine" id="cb44-3" data-line-number="3"><span class="ot">permuteSepBy ::</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
+<a class="sourceLine" id="cb44-4" data-line-number="4">permuteSepBy <span class="fu">=</span> psep (pure ())</a>
+<a class="sourceLine" id="cb44-5" data-line-number="5">  <span class="kw">where</span></a>
+<a class="sourceLine" id="cb44-6" data-line-number="6">    psep</a>
+<a class="sourceLine" id="cb44-7" data-line-number="7"><span class="ot">      ::</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb44-8" data-line-number="8">      <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
+<a class="sourceLine" id="cb44-9" data-line-number="9">    psep init sep (<span class="dt">Perms</span> u bs)</a>
+<a class="sourceLine" id="cb44-10" data-line-number="10">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
+<a class="sourceLine" id="cb44-11" data-line-number="11">      <span class="kw">where</span></a>
+<a class="sourceLine" id="cb44-12" data-line-number="12">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
+<a class="sourceLine" id="cb44-13" data-line-number="13">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb44-14" data-line-number="14">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
+<a class="sourceLine" id="cb44-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb44-16" data-line-number="16">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb44-17" data-line-number="17">          init</a>
+<a class="sourceLine" id="cb44-18" data-line-number="18">          x <span class="ot">&lt;-</span> p</a>
+<a class="sourceLine" id="cb44-19" data-line-number="19">          f <span class="ot">&lt;-</span> psep sep sep w</a>
+<a class="sourceLine" id="cb44-20" data-line-number="20">          return (f x)</a></code></pre></div>
+<p>Likewise there are cases where the indentation of items 2 through n in the permuted list depend on the indentation of item 1. For instance, the items in the list should be indented to the same column, but we don’t know <em>which</em> column until the first item is parsed. We can’t do this in terms of <code>permute</code> and the other combinators, so we’ll provide it here.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="co">-- | Convert a permutation phrase to a @Parser@, with</span></a>
-<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="co">--   terms separated and indented with respect to the</span></a>
-<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="co">--   start position of the first.</span></a>
-<a class="sourceLine" id="cb45-4" data-line-number="4">permuteIndentSepBy</a>
+<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="co">--   all terms indented with respect to the start</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="co">--   position of the first.</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4">permuteIndent</a>
 <a class="sourceLine" id="cb45-5" data-line-number="5"><span class="ot">  ::</span> forall t a<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb45-6" data-line-number="6">  <span class="ot">=&gt;</span> <span class="dt">Indentation</span> t <span class="co">-- ^ Indentation of items 2 through n</span></a>
-<a class="sourceLine" id="cb45-7" data-line-number="7">                   <span class="co">--   with respect to the start position of item 1</span></a>
-<a class="sourceLine" id="cb45-8" data-line-number="8">  <span class="ot">-&gt;</span> <span class="dt">Parser</span> t ()   <span class="co">-- ^ Separator</span></a>
-<a class="sourceLine" id="cb45-9" data-line-number="9">  <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a</a>
-<a class="sourceLine" id="cb45-10" data-line-number="10">  <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
-<a class="sourceLine" id="cb45-11" data-line-number="11">permuteIndentSepBy ind <span class="fu">=</span> pindsep (pure ())</a>
-<a class="sourceLine" id="cb45-12" data-line-number="12">  <span class="kw">where</span></a>
-<a class="sourceLine" id="cb45-13" data-line-number="13">    pindsep</a>
-<a class="sourceLine" id="cb45-14" data-line-number="14"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb45-15" data-line-number="15">      <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
-<a class="sourceLine" id="cb45-16" data-line-number="16">    pindsep init sep (<span class="dt">Perms</span> u bs)</a>
-<a class="sourceLine" id="cb45-17" data-line-number="17">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
-<a class="sourceLine" id="cb45-18" data-line-number="18">      <span class="kw">where</span></a>
-<a class="sourceLine" id="cb45-19" data-line-number="19">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
-<a class="sourceLine" id="cb45-20" data-line-number="20">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb45-21" data-line-number="21">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
-<a class="sourceLine" id="cb45-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb45-23" data-line-number="23">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb45-24" data-line-number="24">          init</a>
-<a class="sourceLine" id="cb45-25" data-line-number="25">          (x,(u,_)) <span class="ot">&lt;-</span> consume p</a>
-<a class="sourceLine" id="cb45-26" data-line-number="26">          f <span class="ot">&lt;-</span> localRef u <span class="fu">$</span> indent ind <span class="fu">$</span> pindsep2 sep w</a>
-<a class="sourceLine" id="cb45-27" data-line-number="27">          return (f x)</a>
-<a class="sourceLine" id="cb45-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb45-29" data-line-number="29">    pindsep2</a>
-<a class="sourceLine" id="cb45-30" data-line-number="30"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
-<a class="sourceLine" id="cb45-31" data-line-number="31">      <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
-<a class="sourceLine" id="cb45-32" data-line-number="32">    pindsep2 sep (<span class="dt">Perms</span> u bs)</a>
-<a class="sourceLine" id="cb45-33" data-line-number="33">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
-<a class="sourceLine" id="cb45-34" data-line-number="34">      <span class="kw">where</span></a>
-<a class="sourceLine" id="cb45-35" data-line-number="35">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
-<a class="sourceLine" id="cb45-36" data-line-number="36">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb45-37" data-line-number="37">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
-<a class="sourceLine" id="cb45-38" data-line-number="38"></a>
-<a class="sourceLine" id="cb45-39" data-line-number="39">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb45-40" data-line-number="40">          sep</a>
-<a class="sourceLine" id="cb45-41" data-line-number="41">          x <span class="ot">&lt;-</span> p</a>
-<a class="sourceLine" id="cb45-42" data-line-number="42">          f <span class="ot">&lt;-</span> pindsep2 sep w</a>
-<a class="sourceLine" id="cb45-43" data-line-number="43">          return (f x)</a></code></pre></div>
+<a class="sourceLine" id="cb45-6" data-line-number="6">  <span class="ot">=&gt;</span> <span class="dt">Indentation</span> t <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
+<a class="sourceLine" id="cb45-7" data-line-number="7">permuteIndent ind <span class="fu">=</span> pind</a>
+<a class="sourceLine" id="cb45-8" data-line-number="8">  <span class="kw">where</span></a>
+<a class="sourceLine" id="cb45-9" data-line-number="9">    pind</a>
+<a class="sourceLine" id="cb45-10" data-line-number="10"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb45-11" data-line-number="11">      <span class="ot">=&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
+<a class="sourceLine" id="cb45-12" data-line-number="12">    pind (<span class="dt">Perms</span> u bs)</a>
+<a class="sourceLine" id="cb45-13" data-line-number="13">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
+<a class="sourceLine" id="cb45-14" data-line-number="14">      <span class="kw">where</span></a>
+<a class="sourceLine" id="cb45-15" data-line-number="15">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
+<a class="sourceLine" id="cb45-16" data-line-number="16">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb45-17" data-line-number="17">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
+<a class="sourceLine" id="cb45-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb45-19" data-line-number="19">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb45-20" data-line-number="20">          (x,(u,_)) <span class="ot">&lt;-</span> consume p</a>
+<a class="sourceLine" id="cb45-21" data-line-number="21">          f <span class="ot">&lt;-</span> localRef u <span class="fu">$</span> indent ind <span class="fu">$</span> pind2 w</a>
+<a class="sourceLine" id="cb45-22" data-line-number="22">          return (f x)</a>
+<a class="sourceLine" id="cb45-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb45-24" data-line-number="24">    pind2</a>
+<a class="sourceLine" id="cb45-25" data-line-number="25"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb45-26" data-line-number="26">      <span class="ot">=&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
+<a class="sourceLine" id="cb45-27" data-line-number="27">    pind2 (<span class="dt">Perms</span> u bs)</a>
+<a class="sourceLine" id="cb45-28" data-line-number="28">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
+<a class="sourceLine" id="cb45-29" data-line-number="29">      <span class="kw">where</span></a>
+<a class="sourceLine" id="cb45-30" data-line-number="30">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
+<a class="sourceLine" id="cb45-31" data-line-number="31">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb45-32" data-line-number="32">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
+<a class="sourceLine" id="cb45-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb45-34" data-line-number="34">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb45-35" data-line-number="35">          x <span class="ot">&lt;-</span> p</a>
+<a class="sourceLine" id="cb45-36" data-line-number="36">          f <span class="ot">&lt;-</span> pind2 w</a>
+<a class="sourceLine" id="cb45-37" data-line-number="37">          return (f x)</a></code></pre></div>
+<p>Finally, combining indentation with an item separator.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co">-- | Convert a permutation phrase to a @Parser@, with</span></a>
+<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="co">--   terms separated and indented with respect to the</span></a>
+<a class="sourceLine" id="cb46-3" data-line-number="3"><span class="co">--   start position of the first.</span></a>
+<a class="sourceLine" id="cb46-4" data-line-number="4">permuteIndentSepBy</a>
+<a class="sourceLine" id="cb46-5" data-line-number="5"><span class="ot">  ::</span> forall t a<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb46-6" data-line-number="6">  <span class="ot">=&gt;</span> <span class="dt">Indentation</span> t <span class="co">-- ^ Indentation of items 2 through n</span></a>
+<a class="sourceLine" id="cb46-7" data-line-number="7">                   <span class="co">--   with respect to the start position of item 1</span></a>
+<a class="sourceLine" id="cb46-8" data-line-number="8">  <span class="ot">-&gt;</span> <span class="dt">Parser</span> t ()   <span class="co">-- ^ Separator</span></a>
+<a class="sourceLine" id="cb46-9" data-line-number="9">  <span class="ot">-&gt;</span> <span class="dt">Perms</span> t a</a>
+<a class="sourceLine" id="cb46-10" data-line-number="10">  <span class="ot">-&gt;</span> <span class="dt">Parser</span> t a</a>
+<a class="sourceLine" id="cb46-11" data-line-number="11">permuteIndentSepBy ind <span class="fu">=</span> pindsep (pure ())</a>
+<a class="sourceLine" id="cb46-12" data-line-number="12">  <span class="kw">where</span></a>
+<a class="sourceLine" id="cb46-13" data-line-number="13">    pindsep</a>
+<a class="sourceLine" id="cb46-14" data-line-number="14"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb46-15" data-line-number="15">      <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
+<a class="sourceLine" id="cb46-16" data-line-number="16">    pindsep init sep (<span class="dt">Perms</span> u bs)</a>
+<a class="sourceLine" id="cb46-17" data-line-number="17">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
+<a class="sourceLine" id="cb46-18" data-line-number="18">      <span class="kw">where</span></a>
+<a class="sourceLine" id="cb46-19" data-line-number="19">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
+<a class="sourceLine" id="cb46-20" data-line-number="20">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb46-21" data-line-number="21">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
+<a class="sourceLine" id="cb46-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb46-23" data-line-number="23">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb46-24" data-line-number="24">          init</a>
+<a class="sourceLine" id="cb46-25" data-line-number="25">          (x,(u,_)) <span class="ot">&lt;-</span> consume p</a>
+<a class="sourceLine" id="cb46-26" data-line-number="26">          f <span class="ot">&lt;-</span> localRef u <span class="fu">$</span> indent ind <span class="fu">$</span> pindsep2 sep w</a>
+<a class="sourceLine" id="cb46-27" data-line-number="27">          return (f x)</a>
+<a class="sourceLine" id="cb46-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb46-29" data-line-number="29">    pindsep2</a>
+<a class="sourceLine" id="cb46-30" data-line-number="30"><span class="ot">      ::</span> forall b<span class="fu">.</span> (<span class="dt">Token</span> t)</a>
+<a class="sourceLine" id="cb46-31" data-line-number="31">      <span class="ot">=&gt;</span> <span class="dt">Parser</span> t () <span class="ot">-&gt;</span> <span class="dt">Perms</span> t b <span class="ot">-&gt;</span> <span class="dt">Parser</span> t b</a>
+<a class="sourceLine" id="cb46-32" data-line-number="32">    pindsep2 sep (<span class="dt">Perms</span> u bs)</a>
+<a class="sourceLine" id="cb46-33" data-line-number="33">      <span class="fu">=</span> choice <span class="fu">$</span> map branch bs <span class="fu">++</span> nil</a>
+<a class="sourceLine" id="cb46-34" data-line-number="34">      <span class="kw">where</span></a>
+<a class="sourceLine" id="cb46-35" data-line-number="35">        nil <span class="fu">=</span> <span class="kw">case</span> u <span class="kw">of</span></a>
+<a class="sourceLine" id="cb46-36" data-line-number="36">          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb46-37" data-line-number="37">          <span class="dt">Just</span> x  <span class="ot">-&gt;</span> [return x]</a>
+<a class="sourceLine" id="cb46-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb46-39" data-line-number="39">        branch (<span class="dt">Branch</span> w p) <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb46-40" data-line-number="40">          sep</a>
+<a class="sourceLine" id="cb46-41" data-line-number="41">          x <span class="ot">&lt;-</span> p</a>
+<a class="sourceLine" id="cb46-42" data-line-number="42">          f <span class="ot">&lt;-</span> pindsep2 sep w</a>
+<a class="sourceLine" id="cb46-43" data-line-number="43">          return (f x)</a></code></pre></div>
 <p>In principle, <code>permute</code>, <code>permuteSepBy</code>, and <code>permuteIndent</code> can all be implemented in terms of <code>permuteIndentSepBy</code>, but I think to do so would obscure what’s happening.</p>
 <h2 id="pretty-printing">Pretty Printing</h2>
 <p>The error information reported by our parsers is pretty good – we get a nice tree structure of errors with customizable text. To give them a little more zing and pep we can pretty print the errors to be a little more readable.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co">-- | Types which can be pretty printed.</span></a>
-<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="kw">class</span> <span class="dt">Pretty</span> t <span class="kw">where</span></a>
-<a class="sourceLine" id="cb46-3" data-line-number="3"><span class="ot">  pretty ::</span> t <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb46-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb46-5" data-line-number="5"><span class="kw">instance</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">Pos</span> t) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb46-6" data-line-number="6">  pretty <span class="fu">=</span> formatPos</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="co">-- | Types which can be pretty printed.</span></a>
+<a class="sourceLine" id="cb47-2" data-line-number="2"><span class="kw">class</span> <span class="dt">Pretty</span> t <span class="kw">where</span></a>
+<a class="sourceLine" id="cb47-3" data-line-number="3"><span class="ot">  pretty ::</span> t <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb47-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb47-5" data-line-number="5"><span class="kw">instance</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">Pos</span> t) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb47-6" data-line-number="6">  pretty <span class="fu">=</span> formatPos</a></code></pre></div>
 <p>The <code>Pretty</code> instance for <code>Char</code> makes control characters visible; otherwise they’d be printed verbatim in the error text.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Pretty</span> <span class="dt">Char</span> <span class="kw">where</span></a>
-<a class="sourceLine" id="cb47-2" data-line-number="2">  pretty c <span class="fu">=</span> <span class="kw">case</span> c <span class="kw">of</span></a>
-<a class="sourceLine" id="cb47-3" data-line-number="3">    <span class="ch">&#39;\n&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\n&#39; (newline)&quot;</span></a>
-<a class="sourceLine" id="cb47-4" data-line-number="4">    <span class="ch">&#39;\t&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\t&#39; (tab)&quot;</span></a>
-<a class="sourceLine" id="cb47-5" data-line-number="5">    <span class="ch">&#39;\v&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\v&#39; (vertical tab)&quot;</span></a>
-<a class="sourceLine" id="cb47-6" data-line-number="6">    <span class="ch">&#39;\r&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\r&#39; (carriage return)&quot;</span></a>
-<a class="sourceLine" id="cb47-7" data-line-number="7">    _ <span class="ot">-&gt;</span> [<span class="ch">&#39;\&#39;&#39;</span>, c, <span class="ch">&#39;\&#39;&#39;</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Pretty</span> <span class="dt">Char</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb48-2" data-line-number="2">  pretty c <span class="fu">=</span> <span class="kw">case</span> c <span class="kw">of</span></a>
+<a class="sourceLine" id="cb48-3" data-line-number="3">    <span class="ch">&#39;\n&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\n&#39; (newline)&quot;</span></a>
+<a class="sourceLine" id="cb48-4" data-line-number="4">    <span class="ch">&#39;\t&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\t&#39; (tab)&quot;</span></a>
+<a class="sourceLine" id="cb48-5" data-line-number="5">    <span class="ch">&#39;\v&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\v&#39; (vertical tab)&quot;</span></a>
+<a class="sourceLine" id="cb48-6" data-line-number="6">    <span class="ch">&#39;\r&#39;</span> <span class="ot">-&gt;</span> <span class="st">&quot;&#39;\\r&#39; (carriage return)&quot;</span></a>
+<a class="sourceLine" id="cb48-7" data-line-number="7">    _ <span class="ot">-&gt;</span> [<span class="ch">&#39;\&#39;&#39;</span>, c, <span class="ch">&#39;\&#39;&#39;</span>]</a></code></pre></div>
 <p>We can then pretty print <code>BasicError</code>s, recalling what they mean from how they are used.</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">instance</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">BasicError</span> t) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb48-2" data-line-number="2">  pretty e <span class="fu">=</span> <span class="kw">case</span> e <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-3" data-line-number="3">    <span class="dt">UnexpectedEOF</span> z <span class="ot">-&gt;</span> <span class="kw">case</span> z <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-4" data-line-number="4">      <span class="dt">Left</span> str <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-5" data-line-number="5">        [ <span class="st">&quot;expected&quot;</span>, str, <span class="st">&quot;but reached end of stream&quot;</span> ]</a>
-<a class="sourceLine" id="cb48-6" data-line-number="6">      <span class="dt">Right</span> c <span class="ot">-&gt;</span> <span class="kw">case</span> c <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-7" data-line-number="7">        <span class="dt">Nothing</span> <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb48-8" data-line-number="8">          <span class="st">&quot;expected beginning of stream, but reached end of stream&quot;</span></a>
-<a class="sourceLine" id="cb48-9" data-line-number="9">        <span class="dt">Just</span> w <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-10" data-line-number="10">          [ <span class="st">&quot;expected&quot;</span>, pretty w, <span class="st">&quot;but reached end of stream&quot;</span> ]</a>
-<a class="sourceLine" id="cb48-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb48-12" data-line-number="12">    <span class="dt">UnexpectedToken</span> c z pos <span class="ot">-&gt;</span> <span class="kw">case</span> z <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-13" data-line-number="13">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-14" data-line-number="14">        [ <span class="st">&quot;expected EOF but read&quot;</span>, pretty c, <span class="st">&quot;at&quot;</span>, pretty pos ]</a>
-<a class="sourceLine" id="cb48-15" data-line-number="15">      <span class="dt">Just</span> d <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-16" data-line-number="16">        [ <span class="st">&quot;expected&quot;</span>, pretty d, <span class="st">&quot;but read&quot;</span>, pretty c, <span class="st">&quot;at&quot;</span>, pretty pos ]</a>
-<a class="sourceLine" id="cb48-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb48-18" data-line-number="18">    <span class="dt">UnexpectedSatisfy</span> c name pos <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-19" data-line-number="19">      [ <span class="st">&quot;expected&quot;</span>, name, <span class="st">&quot;but read&quot;</span>, pretty c, <span class="st">&quot;at&quot;</span>, pretty pos ]</a>
-<a class="sourceLine" id="cb48-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb48-21" data-line-number="21">    <span class="dt">UnexpectedDecline</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-22" data-line-number="22">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb48-23" data-line-number="23">        <span class="st">&quot;expected to consume characters but encountered EOF&quot;</span></a>
-<a class="sourceLine" id="cb48-24" data-line-number="24">      <span class="dt">Just</span> u <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-25" data-line-number="25">        [ <span class="st">&quot;expected to consume characters at&quot;</span>, pretty u ]</a>
-<a class="sourceLine" id="cb48-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb48-27" data-line-number="27">    <span class="dt">UnexpectedIndentation</span> msg (u1,u2) <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb48-28" data-line-number="28">      unwords [ <span class="st">&quot;expected&quot;</span>, msg ]</a>
-<a class="sourceLine" id="cb48-29" data-line-number="29"></a>
-<a class="sourceLine" id="cb48-30" data-line-number="30">    <span class="dt">ExpectedBOF</span> pos <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-31" data-line-number="31">      [ <span class="st">&quot;expected beginning of stream, but found position&quot;</span>, pretty pos ]</a>
-<a class="sourceLine" id="cb48-32" data-line-number="32"></a>
-<a class="sourceLine" id="cb48-33" data-line-number="33">    <span class="dt">IncompleteParse</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-34" data-line-number="34">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;expected to consume the entire stream&quot;</span></a>
-<a class="sourceLine" id="cb48-35" data-line-number="35">      <span class="dt">Just</span> u <span class="ot">-&gt;</span> unwords</a>
-<a class="sourceLine" id="cb48-36" data-line-number="36">        [ <span class="st">&quot;expected to consume the entire stream&quot;</span></a>
-<a class="sourceLine" id="cb48-37" data-line-number="37">        , <span class="st">&quot;but characters remain at position&quot;</span>, pretty u</a>
-<a class="sourceLine" id="cb48-38" data-line-number="38">        ]</a>
-<a class="sourceLine" id="cb48-39" data-line-number="39"></a>
-<a class="sourceLine" id="cb48-40" data-line-number="40">    <span class="dt">Failure</span> msg pos <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb48-41" data-line-number="41">      <span class="kw">let</span> loc <span class="fu">=</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
-<a class="sourceLine" id="cb48-42" data-line-number="42">            <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;end of stream:&quot;</span></a>
-<a class="sourceLine" id="cb48-43" data-line-number="43">            <span class="dt">Just</span> u <span class="ot">-&gt;</span> <span class="st">&quot;at &quot;</span> <span class="fu">++</span> pretty u <span class="fu">++</span> <span class="st">&quot;:&quot;</span></a>
-<a class="sourceLine" id="cb48-44" data-line-number="44">      <span class="kw">in</span> unwords [ loc, msg ]</a></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="kw">instance</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">BasicError</span> t) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb49-2" data-line-number="2">  pretty e <span class="fu">=</span> <span class="kw">case</span> e <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-3" data-line-number="3">    <span class="dt">UnexpectedEOF</span> z <span class="ot">-&gt;</span> <span class="kw">case</span> z <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-4" data-line-number="4">      <span class="dt">Left</span> str <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-5" data-line-number="5">        [ <span class="st">&quot;expected&quot;</span>, str, <span class="st">&quot;but reached end of stream&quot;</span> ]</a>
+<a class="sourceLine" id="cb49-6" data-line-number="6">      <span class="dt">Right</span> c <span class="ot">-&gt;</span> <span class="kw">case</span> c <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-7" data-line-number="7">        <span class="dt">Nothing</span> <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb49-8" data-line-number="8">          <span class="st">&quot;expected beginning of stream, but reached end of stream&quot;</span></a>
+<a class="sourceLine" id="cb49-9" data-line-number="9">        <span class="dt">Just</span> w <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-10" data-line-number="10">          [ <span class="st">&quot;expected&quot;</span>, pretty w, <span class="st">&quot;but reached end of stream&quot;</span> ]</a>
+<a class="sourceLine" id="cb49-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb49-12" data-line-number="12">    <span class="dt">UnexpectedToken</span> c z pos <span class="ot">-&gt;</span> <span class="kw">case</span> z <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-13" data-line-number="13">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-14" data-line-number="14">        [ <span class="st">&quot;expected EOF but read&quot;</span>, pretty c, <span class="st">&quot;at&quot;</span>, pretty pos ]</a>
+<a class="sourceLine" id="cb49-15" data-line-number="15">      <span class="dt">Just</span> d <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-16" data-line-number="16">        [ <span class="st">&quot;expected&quot;</span>, pretty d, <span class="st">&quot;but read&quot;</span>, pretty c, <span class="st">&quot;at&quot;</span>, pretty pos ]</a>
+<a class="sourceLine" id="cb49-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb49-18" data-line-number="18">    <span class="dt">UnexpectedSatisfy</span> c name pos <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-19" data-line-number="19">      [ <span class="st">&quot;expected&quot;</span>, name, <span class="st">&quot;but read&quot;</span>, pretty c, <span class="st">&quot;at&quot;</span>, pretty pos ]</a>
+<a class="sourceLine" id="cb49-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb49-21" data-line-number="21">    <span class="dt">UnexpectedDecline</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-22" data-line-number="22">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb49-23" data-line-number="23">        <span class="st">&quot;expected to consume characters but encountered EOF&quot;</span></a>
+<a class="sourceLine" id="cb49-24" data-line-number="24">      <span class="dt">Just</span> u <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-25" data-line-number="25">        [ <span class="st">&quot;expected to consume characters at&quot;</span>, pretty u ]</a>
+<a class="sourceLine" id="cb49-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb49-27" data-line-number="27">    <span class="dt">UnexpectedIndentation</span> msg (u1,u2) <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb49-28" data-line-number="28">      unwords [ <span class="st">&quot;expected&quot;</span>, msg ]</a>
+<a class="sourceLine" id="cb49-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb49-30" data-line-number="30">    <span class="dt">ExpectedBOF</span> pos <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-31" data-line-number="31">      [ <span class="st">&quot;expected beginning of stream, but found position&quot;</span>, pretty pos ]</a>
+<a class="sourceLine" id="cb49-32" data-line-number="32"></a>
+<a class="sourceLine" id="cb49-33" data-line-number="33">    <span class="dt">IncompleteParse</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-34" data-line-number="34">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;expected to consume the entire stream&quot;</span></a>
+<a class="sourceLine" id="cb49-35" data-line-number="35">      <span class="dt">Just</span> u <span class="ot">-&gt;</span> unwords</a>
+<a class="sourceLine" id="cb49-36" data-line-number="36">        [ <span class="st">&quot;expected to consume the entire stream&quot;</span></a>
+<a class="sourceLine" id="cb49-37" data-line-number="37">        , <span class="st">&quot;but characters remain at position&quot;</span>, pretty u</a>
+<a class="sourceLine" id="cb49-38" data-line-number="38">        ]</a>
+<a class="sourceLine" id="cb49-39" data-line-number="39"></a>
+<a class="sourceLine" id="cb49-40" data-line-number="40">    <span class="dt">Failure</span> msg pos <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb49-41" data-line-number="41">      <span class="kw">let</span> loc <span class="fu">=</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
+<a class="sourceLine" id="cb49-42" data-line-number="42">            <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;end of stream:&quot;</span></a>
+<a class="sourceLine" id="cb49-43" data-line-number="43">            <span class="dt">Just</span> u <span class="ot">-&gt;</span> <span class="st">&quot;at &quot;</span> <span class="fu">++</span> pretty u <span class="fu">++</span> <span class="st">&quot;:&quot;</span></a>
+<a class="sourceLine" id="cb49-44" data-line-number="44">      <span class="kw">in</span> unwords [ loc, msg ]</a></code></pre></div>
 <p><code>Annotation</code>s are similar.</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="kw">instance</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">Annotation</span> t) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb49-2" data-line-number="2">  pretty a <span class="fu">=</span> <span class="kw">case</span> a <span class="kw">of</span></a>
-<a class="sourceLine" id="cb49-3" data-line-number="3">    <span class="dt">Note</span> msg pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
-<a class="sourceLine" id="cb49-4" data-line-number="4">      <span class="dt">Just</span> z <span class="ot">-&gt;</span> unwords [ msg, <span class="st">&quot;at&quot;</span>, pretty z ]</a>
-<a class="sourceLine" id="cb49-5" data-line-number="5">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> msg</a>
-<a class="sourceLine" id="cb49-6" data-line-number="6">    <span class="dt">Lookahead</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
-<a class="sourceLine" id="cb49-7" data-line-number="7">      <span class="dt">Just</span> z <span class="ot">-&gt;</span> unwords [ <span class="st">&quot;successful lookahead at&quot;</span>, pretty z ]</a>
-<a class="sourceLine" id="cb49-8" data-line-number="8">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;successful lookahead at end of stream&quot;</span></a>
-<a class="sourceLine" id="cb49-9" data-line-number="9">    <span class="dt">DeclineReason</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
-<a class="sourceLine" id="cb49-10" data-line-number="10">      <span class="dt">Just</span> z <span class="ot">-&gt;</span> unwords [ <span class="st">&quot;consumption at&quot;</span>, pretty z ]</a>
-<a class="sourceLine" id="cb49-11" data-line-number="11">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;consume at EOF&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw">instance</span> (<span class="dt">Token</span> t) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">Annotation</span> t) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb50-2" data-line-number="2">  pretty a <span class="fu">=</span> <span class="kw">case</span> a <span class="kw">of</span></a>
+<a class="sourceLine" id="cb50-3" data-line-number="3">    <span class="dt">Note</span> msg pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
+<a class="sourceLine" id="cb50-4" data-line-number="4">      <span class="dt">Just</span> z <span class="ot">-&gt;</span> unwords [ msg, <span class="st">&quot;at&quot;</span>, pretty z ]</a>
+<a class="sourceLine" id="cb50-5" data-line-number="5">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> msg</a>
+<a class="sourceLine" id="cb50-6" data-line-number="6">    <span class="dt">Lookahead</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
+<a class="sourceLine" id="cb50-7" data-line-number="7">      <span class="dt">Just</span> z <span class="ot">-&gt;</span> unwords [ <span class="st">&quot;successful lookahead at&quot;</span>, pretty z ]</a>
+<a class="sourceLine" id="cb50-8" data-line-number="8">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;successful lookahead at end of stream&quot;</span></a>
+<a class="sourceLine" id="cb50-9" data-line-number="9">    <span class="dt">DeclineReason</span> pos <span class="ot">-&gt;</span> <span class="kw">case</span> pos <span class="kw">of</span></a>
+<a class="sourceLine" id="cb50-10" data-line-number="10">      <span class="dt">Just</span> z <span class="ot">-&gt;</span> unwords [ <span class="st">&quot;consumption at&quot;</span>, pretty z ]</a>
+<a class="sourceLine" id="cb50-11" data-line-number="11">      <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="st">&quot;consume at EOF&quot;</span></a></code></pre></div>
 <p>Now <code>ParseError</code>s are trees, and we can make the structure of a parse error more clear by formatting it as one. We’ll use the helper type <code>Tree</code> to represent arbitrary rose trees, and <code>renderTree</code> to print them.</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="kw">data</span> <span class="dt">Tree</span> a</a>
-<a class="sourceLine" id="cb50-2" data-line-number="2">  <span class="fu">=</span> <span class="dt">T</span> a [<span class="dt">Tree</span> a]</a>
-<a class="sourceLine" id="cb50-3" data-line-number="3">  <span class="kw">deriving</span> <span class="dt">Show</span></a>
-<a class="sourceLine" id="cb50-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb50-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Tree</span> <span class="kw">where</span></a>
-<a class="sourceLine" id="cb50-6" data-line-number="6">  fmap f (<span class="dt">T</span> x bs) <span class="fu">=</span> <span class="dt">T</span> (f x) (map (fmap f) bs)</a>
-<a class="sourceLine" id="cb50-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb50-8" data-line-number="8"><span class="ot">renderTree ::</span> <span class="dt">Tree</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb50-9" data-line-number="9">renderTree <span class="fu">=</span> render <span class="fu">.</span> addPrefix</a>
-<a class="sourceLine" id="cb50-10" data-line-number="10">  <span class="kw">where</span></a>
-<a class="sourceLine" id="cb50-11" data-line-number="11"><span class="ot">    addPrefix ::</span> <span class="dt">Tree</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb50-12" data-line-number="12">    addPrefix (<span class="dt">T</span> x bs) <span class="fu">=</span> <span class="dt">T</span> x <span class="fu">$</span> mapLast</a>
-<a class="sourceLine" id="cb50-13" data-line-number="13">      (mapRoot (<span class="st">&quot;├─ &quot;</span> <span class="fu">++</span>) (<span class="st">&quot;│  &quot;</span> <span class="fu">++</span>))</a>
-<a class="sourceLine" id="cb50-14" data-line-number="14">      (mapRoot (<span class="st">&quot;└─ &quot;</span> <span class="fu">++</span>) (<span class="st">&quot;   &quot;</span> <span class="fu">++</span>))</a>
-<a class="sourceLine" id="cb50-15" data-line-number="15">      (map addPrefix bs)</a>
-<a class="sourceLine" id="cb50-16" data-line-number="16"></a>
-<a class="sourceLine" id="cb50-17" data-line-number="17"><span class="ot">    mapRoot ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> b</a>
-<a class="sourceLine" id="cb50-18" data-line-number="18">    mapRoot f g (<span class="dt">T</span> x bs) <span class="fu">=</span> <span class="dt">T</span> (f x) (map (fmap g) bs)</a>
-<a class="sourceLine" id="cb50-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb50-20" data-line-number="20"><span class="ot">    mapLast ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [b]</a>
-<a class="sourceLine" id="cb50-21" data-line-number="21">    mapLast f g as <span class="fu">=</span> <span class="kw">case</span> as <span class="kw">of</span></a>
-<a class="sourceLine" id="cb50-22" data-line-number="22">      []   <span class="ot">-&gt;</span> []</a>
-<a class="sourceLine" id="cb50-23" data-line-number="23">      x<span class="fu">:</span>[] <span class="ot">-&gt;</span> [g x]</a>
-<a class="sourceLine" id="cb50-24" data-line-number="24">      x<span class="fu">:</span>xs <span class="ot">-&gt;</span> (f x) <span class="fu">:</span> mapLast f g xs</a>
-<a class="sourceLine" id="cb50-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb50-26" data-line-number="26"><span class="ot">    render ::</span> <span class="dt">Tree</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb50-27" data-line-number="27">    render <span class="fu">=</span> concat <span class="fu">.</span> intersperse <span class="st">&quot;\n&quot;</span> <span class="fu">.</span> flatten</a>
-<a class="sourceLine" id="cb50-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb50-29" data-line-number="29"><span class="ot">    flatten ::</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> [a]</a>
-<a class="sourceLine" id="cb50-30" data-line-number="30">    flatten (<span class="dt">T</span> x bs) <span class="fu">=</span> x <span class="fu">:</span> concatMap flatten bs</a></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb51-1" data-line-number="1"><span class="kw">data</span> <span class="dt">Tree</span> a</a>
+<a class="sourceLine" id="cb51-2" data-line-number="2">  <span class="fu">=</span> <span class="dt">T</span> a [<span class="dt">Tree</span> a]</a>
+<a class="sourceLine" id="cb51-3" data-line-number="3">  <span class="kw">deriving</span> <span class="dt">Show</span></a>
+<a class="sourceLine" id="cb51-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb51-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Tree</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb51-6" data-line-number="6">  fmap f (<span class="dt">T</span> x bs) <span class="fu">=</span> <span class="dt">T</span> (f x) (map (fmap f) bs)</a>
+<a class="sourceLine" id="cb51-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb51-8" data-line-number="8"><span class="ot">renderTree ::</span> <span class="dt">Tree</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb51-9" data-line-number="9">renderTree <span class="fu">=</span> render <span class="fu">.</span> addPrefix</a>
+<a class="sourceLine" id="cb51-10" data-line-number="10">  <span class="kw">where</span></a>
+<a class="sourceLine" id="cb51-11" data-line-number="11"><span class="ot">    addPrefix ::</span> <span class="dt">Tree</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb51-12" data-line-number="12">    addPrefix (<span class="dt">T</span> x bs) <span class="fu">=</span> <span class="dt">T</span> x <span class="fu">$</span> mapLast</a>
+<a class="sourceLine" id="cb51-13" data-line-number="13">      (mapRoot (<span class="st">&quot;├─ &quot;</span> <span class="fu">++</span>) (<span class="st">&quot;│  &quot;</span> <span class="fu">++</span>))</a>
+<a class="sourceLine" id="cb51-14" data-line-number="14">      (mapRoot (<span class="st">&quot;└─ &quot;</span> <span class="fu">++</span>) (<span class="st">&quot;   &quot;</span> <span class="fu">++</span>))</a>
+<a class="sourceLine" id="cb51-15" data-line-number="15">      (map addPrefix bs)</a>
+<a class="sourceLine" id="cb51-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb51-17" data-line-number="17"><span class="ot">    mapRoot ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> b</a>
+<a class="sourceLine" id="cb51-18" data-line-number="18">    mapRoot f g (<span class="dt">T</span> x bs) <span class="fu">=</span> <span class="dt">T</span> (f x) (map (fmap g) bs)</a>
+<a class="sourceLine" id="cb51-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb51-20" data-line-number="20"><span class="ot">    mapLast ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [b]</a>
+<a class="sourceLine" id="cb51-21" data-line-number="21">    mapLast f g as <span class="fu">=</span> <span class="kw">case</span> as <span class="kw">of</span></a>
+<a class="sourceLine" id="cb51-22" data-line-number="22">      []   <span class="ot">-&gt;</span> []</a>
+<a class="sourceLine" id="cb51-23" data-line-number="23">      x<span class="fu">:</span>[] <span class="ot">-&gt;</span> [g x]</a>
+<a class="sourceLine" id="cb51-24" data-line-number="24">      x<span class="fu">:</span>xs <span class="ot">-&gt;</span> (f x) <span class="fu">:</span> mapLast f g xs</a>
+<a class="sourceLine" id="cb51-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb51-26" data-line-number="26"><span class="ot">    render ::</span> <span class="dt">Tree</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb51-27" data-line-number="27">    render <span class="fu">=</span> concat <span class="fu">.</span> intersperse <span class="st">&quot;\n&quot;</span> <span class="fu">.</span> flatten</a>
+<a class="sourceLine" id="cb51-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb51-29" data-line-number="29"><span class="ot">    flatten ::</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> [a]</a>
+<a class="sourceLine" id="cb51-30" data-line-number="30">    flatten (<span class="dt">T</span> x bs) <span class="fu">=</span> x <span class="fu">:</span> concatMap flatten bs</a></code></pre></div>
 <p>Now we can pretty print <code>Error a e</code>s by converting them to <code>Tree String</code>s first.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb51-1" data-line-number="1"><span class="kw">instance</span> (<span class="dt">Pretty</span> a, <span class="dt">Pretty</span> e) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">Error</span> a e) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb51-2" data-line-number="2">  pretty <span class="fu">=</span> renderTree <span class="fu">.</span> toTree</a>
-<a class="sourceLine" id="cb51-3" data-line-number="3">    <span class="kw">where</span></a>
-<a class="sourceLine" id="cb51-4" data-line-number="4"><span class="ot">      toTree ::</span> (<span class="dt">Pretty</span> a, <span class="dt">Pretty</span> e) <span class="ot">=&gt;</span> <span class="dt">Error</span> a e <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb51-5" data-line-number="5">      toTree err <span class="fu">=</span> <span class="kw">case</span> err <span class="kw">of</span></a>
-<a class="sourceLine" id="cb51-6" data-line-number="6">        <span class="dt">OneOf</span> es <span class="ot">-&gt;</span> <span class="kw">case</span> es <span class="kw">of</span></a>
-<a class="sourceLine" id="cb51-7" data-line-number="7">          [] <span class="ot">-&gt;</span> <span class="dt">T</span> <span class="st">&quot;unspecified failure :(&quot;</span> []</a>
-<a class="sourceLine" id="cb51-8" data-line-number="8">          _  <span class="ot">-&gt;</span> <span class="dt">T</span> <span class="st">&quot;one of the following:&quot;</span> <span class="fu">$</span> map toTree es</a>
-<a class="sourceLine" id="cb51-9" data-line-number="9">        <span class="dt">Because</span> a err <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb51-10" data-line-number="10">          <span class="kw">let</span></a>
-<a class="sourceLine" id="cb51-11" data-line-number="11">            msg <span class="fu">=</span> unwords</a>
-<a class="sourceLine" id="cb51-12" data-line-number="12">              [ <span class="st">&quot;expected&quot;</span>, pretty a, <span class="st">&quot;which failed due to&quot;</span> ]</a>
-<a class="sourceLine" id="cb51-13" data-line-number="13">          <span class="kw">in</span> <span class="dt">T</span> msg [toTree err]</a>
-<a class="sourceLine" id="cb51-14" data-line-number="14">        <span class="dt">Simply</span> e <span class="ot">-&gt;</span> <span class="dt">T</span> (pretty e) []</a>
-<a class="sourceLine" id="cb51-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb51-16" data-line-number="16"><span class="ot">displayParseError ::</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t) <span class="ot">=&gt;</span> <span class="dt">ParseError</span> t <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb51-17" data-line-number="17">displayParseError <span class="fu">=</span> pretty</a></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">instance</span> (<span class="dt">Pretty</span> a, <span class="dt">Pretty</span> e) <span class="ot">=&gt;</span> <span class="dt">Pretty</span> (<span class="dt">Error</span> a e) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb52-2" data-line-number="2">  pretty <span class="fu">=</span> renderTree <span class="fu">.</span> toTree</a>
+<a class="sourceLine" id="cb52-3" data-line-number="3">    <span class="kw">where</span></a>
+<a class="sourceLine" id="cb52-4" data-line-number="4"><span class="ot">      toTree ::</span> (<span class="dt">Pretty</span> a, <span class="dt">Pretty</span> e) <span class="ot">=&gt;</span> <span class="dt">Error</span> a e <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb52-5" data-line-number="5">      toTree err <span class="fu">=</span> <span class="kw">case</span> err <span class="kw">of</span></a>
+<a class="sourceLine" id="cb52-6" data-line-number="6">        <span class="dt">OneOf</span> es <span class="ot">-&gt;</span> <span class="kw">case</span> es <span class="kw">of</span></a>
+<a class="sourceLine" id="cb52-7" data-line-number="7">          [] <span class="ot">-&gt;</span> <span class="dt">T</span> <span class="st">&quot;unspecified failure :(&quot;</span> []</a>
+<a class="sourceLine" id="cb52-8" data-line-number="8">          _  <span class="ot">-&gt;</span> <span class="dt">T</span> <span class="st">&quot;one of the following:&quot;</span> <span class="fu">$</span> map toTree es</a>
+<a class="sourceLine" id="cb52-9" data-line-number="9">        <span class="dt">Because</span> a err <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb52-10" data-line-number="10">          <span class="kw">let</span></a>
+<a class="sourceLine" id="cb52-11" data-line-number="11">            msg <span class="fu">=</span> unwords</a>
+<a class="sourceLine" id="cb52-12" data-line-number="12">              [ <span class="st">&quot;expected&quot;</span>, pretty a, <span class="st">&quot;which failed due to&quot;</span> ]</a>
+<a class="sourceLine" id="cb52-13" data-line-number="13">          <span class="kw">in</span> <span class="dt">T</span> msg [toTree err]</a>
+<a class="sourceLine" id="cb52-14" data-line-number="14">        <span class="dt">Simply</span> e <span class="ot">-&gt;</span> <span class="dt">T</span> (pretty e) []</a>
+<a class="sourceLine" id="cb52-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb52-16" data-line-number="16"><span class="ot">displayParseError ::</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t) <span class="ot">=&gt;</span> <span class="dt">ParseError</span> t <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb52-17" data-line-number="17">displayParseError <span class="fu">=</span> pretty</a></code></pre></div>
 <h2 id="an-indentation-dsl">An Indentation DSL</h2>
 <p>The <code>Indentation</code> type for specifying indentation relations is a little too powerful. The vast majority of the time we’ll only need one of a small number of different indentation strategies – indent by some amount, indent an extra <span class="math inline">\(k\)</span> spaces, indent to the same level. To simplify things we’ll also provide a mini DSL for constructing indentations of two basic kinds.</p>
 <p>The most basic indentation pattern goes something like this: look at the (start|end) (column|line) of a successful parse, comparing it to the corresponding part of (the reference point|some specified point) using (one of a small number of relations). We can wrap up all such indentation strategies behind two functions: <code>wrtRef</code> and <code>wrtPos</code>.</p>
 <p>First we need two helper types: one to represent the “dimensions” of a <code>Pos</code>, and one to represent a handful of different relations on the integers.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="co">-- | Represents either the first or last consumed position of a</span></a>
-<a class="sourceLine" id="cb52-2" data-line-number="2"><span class="co">--   successful parse.</span></a>
-<a class="sourceLine" id="cb52-3" data-line-number="3"><span class="kw">data</span> <span class="dt">Endpoint</span></a>
-<a class="sourceLine" id="cb52-4" data-line-number="4">  <span class="fu">=</span> <span class="dt">Start</span> <span class="fu">|</span> <span class="dt">End</span></a>
-<a class="sourceLine" id="cb52-5" data-line-number="5">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a>
-<a class="sourceLine" id="cb52-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb52-7" data-line-number="7"><span class="co">-- | The dimensions of a @Pos@.</span></a>
-<a class="sourceLine" id="cb52-8" data-line-number="8"><span class="kw">data</span> <span class="dt">Dimension</span></a>
-<a class="sourceLine" id="cb52-9" data-line-number="9">  <span class="fu">=</span> <span class="dt">Column</span> <span class="fu">|</span> <span class="dt">Line</span></a>
-<a class="sourceLine" id="cb52-10" data-line-number="10">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a>
-<a class="sourceLine" id="cb52-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb52-12" data-line-number="12"><span class="co">-- | Basic relations on @Integer@.</span></a>
-<a class="sourceLine" id="cb52-13" data-line-number="13"><span class="kw">data</span> <span class="dt">Relation</span></a>
-<a class="sourceLine" id="cb52-14" data-line-number="14">  <span class="fu">=</span> <span class="dt">Eq</span>          <span class="co">-- ^ Equal to</span></a>
-<a class="sourceLine" id="cb52-15" data-line-number="15">  <span class="fu">|</span> <span class="dt">Neq</span>         <span class="co">-- ^ Not equal to</span></a>
-<a class="sourceLine" id="cb52-16" data-line-number="16">  <span class="fu">|</span> <span class="dt">Lt</span>          <span class="co">-- ^ Strictly less than</span></a>
-<a class="sourceLine" id="cb52-17" data-line-number="17">  <span class="fu">|</span> <span class="dt">Gt</span>          <span class="co">-- ^ Strictly greater than</span></a>
-<a class="sourceLine" id="cb52-18" data-line-number="18">  <span class="fu">|</span> <span class="dt">Leq</span>         <span class="co">-- ^ Less than or equal to</span></a>
-<a class="sourceLine" id="cb52-19" data-line-number="19">  <span class="fu">|</span> <span class="dt">Geq</span>         <span class="co">-- ^ Greater than or equal to</span></a>
-<a class="sourceLine" id="cb52-20" data-line-number="20">  <span class="fu">|</span> <span class="dt">Add</span> <span class="dt">Integer</span> <span class="co">-- ^ Fixed offset</span></a>
-<a class="sourceLine" id="cb52-21" data-line-number="21">  <span class="fu">|</span> <span class="dt">Fix</span> <span class="dt">Integer</span> <span class="co">-- ^ Fixed value</span></a>
-<a class="sourceLine" id="cb52-22" data-line-number="22">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="co">-- | Represents either the first or last consumed position of a</span></a>
+<a class="sourceLine" id="cb53-2" data-line-number="2"><span class="co">--   successful parse.</span></a>
+<a class="sourceLine" id="cb53-3" data-line-number="3"><span class="kw">data</span> <span class="dt">Endpoint</span></a>
+<a class="sourceLine" id="cb53-4" data-line-number="4">  <span class="fu">=</span> <span class="dt">Start</span> <span class="fu">|</span> <span class="dt">End</span></a>
+<a class="sourceLine" id="cb53-5" data-line-number="5">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a>
+<a class="sourceLine" id="cb53-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb53-7" data-line-number="7"><span class="co">-- | The dimensions of a @Pos@.</span></a>
+<a class="sourceLine" id="cb53-8" data-line-number="8"><span class="kw">data</span> <span class="dt">Dimension</span></a>
+<a class="sourceLine" id="cb53-9" data-line-number="9">  <span class="fu">=</span> <span class="dt">Column</span> <span class="fu">|</span> <span class="dt">Line</span></a>
+<a class="sourceLine" id="cb53-10" data-line-number="10">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a>
+<a class="sourceLine" id="cb53-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb53-12" data-line-number="12"><span class="co">-- | Basic relations on @Integer@.</span></a>
+<a class="sourceLine" id="cb53-13" data-line-number="13"><span class="kw">data</span> <span class="dt">Relation</span></a>
+<a class="sourceLine" id="cb53-14" data-line-number="14">  <span class="fu">=</span> <span class="dt">Eq</span>          <span class="co">-- ^ Equal to</span></a>
+<a class="sourceLine" id="cb53-15" data-line-number="15">  <span class="fu">|</span> <span class="dt">Neq</span>         <span class="co">-- ^ Not equal to</span></a>
+<a class="sourceLine" id="cb53-16" data-line-number="16">  <span class="fu">|</span> <span class="dt">Lt</span>          <span class="co">-- ^ Strictly less than</span></a>
+<a class="sourceLine" id="cb53-17" data-line-number="17">  <span class="fu">|</span> <span class="dt">Gt</span>          <span class="co">-- ^ Strictly greater than</span></a>
+<a class="sourceLine" id="cb53-18" data-line-number="18">  <span class="fu">|</span> <span class="dt">Leq</span>         <span class="co">-- ^ Less than or equal to</span></a>
+<a class="sourceLine" id="cb53-19" data-line-number="19">  <span class="fu">|</span> <span class="dt">Geq</span>         <span class="co">-- ^ Greater than or equal to</span></a>
+<a class="sourceLine" id="cb53-20" data-line-number="20">  <span class="fu">|</span> <span class="dt">Add</span> <span class="dt">Integer</span> <span class="co">-- ^ Fixed offset</span></a>
+<a class="sourceLine" id="cb53-21" data-line-number="21">  <span class="fu">|</span> <span class="dt">Fix</span> <span class="dt">Integer</span> <span class="co">-- ^ Fixed value</span></a>
+<a class="sourceLine" id="cb53-22" data-line-number="22">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a></code></pre></div>
 <p>Now <code>wrtRef</code> takes an endpoint, a dimenstion, and a relation and constructs an indentation strategy against the reference position.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="co">-- | Constructs a simple indentation strategy with respect to</span></a>
-<a class="sourceLine" id="cb53-2" data-line-number="2"><span class="co">--   the reference position.</span></a>
-<a class="sourceLine" id="cb53-3" data-line-number="3">wrtRef</a>
-<a class="sourceLine" id="cb53-4" data-line-number="4"><span class="ot">  ::</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t)</a>
-<a class="sourceLine" id="cb53-5" data-line-number="5">  <span class="ot">=&gt;</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Indentation</span> t</a>
-<a class="sourceLine" id="cb53-6" data-line-number="6">wrtRef pt dim rel <span class="fu">=</span> <span class="dt">Indentation</span></a>
-<a class="sourceLine" id="cb53-7" data-line-number="7">  { relation <span class="fu">=</span> \ref range <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb53-8" data-line-number="8">      getRel rel (getDim dim ref) (getDim dim <span class="fu">$</span> getPt pt range)</a>
-<a class="sourceLine" id="cb53-9" data-line-number="9">  , message <span class="fu">=</span> \ref range <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb53-10" data-line-number="10">      <span class="kw">let</span></a>
-<a class="sourceLine" id="cb53-11" data-line-number="11">        labelRef <span class="fu">=</span> <span class="kw">if</span> compareRef rel</a>
-<a class="sourceLine" id="cb53-12" data-line-number="12">          <span class="kw">then</span> [ <span class="st">&quot;that of the reference position at&quot;</span>, pretty ref ]</a>
-<a class="sourceLine" id="cb53-13" data-line-number="13">          <span class="kw">else</span> []</a>
-<a class="sourceLine" id="cb53-14" data-line-number="14">      <span class="kw">in</span></a>
-<a class="sourceLine" id="cb53-15" data-line-number="15">        unwords <span class="fu">$</span></a>
-<a class="sourceLine" id="cb53-16" data-line-number="16">          [ labelPt pt, labelDim dim, <span class="st">&quot;of successful parse, at&quot;</span></a>
-<a class="sourceLine" id="cb53-17" data-line-number="17">          , (pretty <span class="fu">$</span> getPt pt range) <span class="fu">++</span> <span class="st">&quot;,&quot;</span>, <span class="st">&quot;to&quot;</span>, labelRel rel</a>
-<a class="sourceLine" id="cb53-18" data-line-number="18">          ] <span class="fu">++</span> labelRef</a>
-<a class="sourceLine" id="cb53-19" data-line-number="19">  }</a></code></pre></div>
-<p><code>wrtPos</code> is almost identical, but rather than the reference position, compares against a specified <code>Pos</code> value.</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb54-1" data-line-number="1"><span class="co">-- | Constructs a simple indentation strategy with respect to the</span></a>
-<a class="sourceLine" id="cb54-2" data-line-number="2"><span class="co">--   given position.</span></a>
-<a class="sourceLine" id="cb54-3" data-line-number="3">wrtPos</a>
+<div class="sourceCode" id="cb54"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb54-1" data-line-number="1"><span class="co">-- | Constructs a simple indentation strategy with respect to</span></a>
+<a class="sourceLine" id="cb54-2" data-line-number="2"><span class="co">--   the reference position.</span></a>
+<a class="sourceLine" id="cb54-3" data-line-number="3">wrtRef</a>
 <a class="sourceLine" id="cb54-4" data-line-number="4"><span class="ot">  ::</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t)</a>
-<a class="sourceLine" id="cb54-5" data-line-number="5">  <span class="ot">=&gt;</span> <span class="dt">Pos</span> t <span class="ot">-&gt;</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Indentation</span> t</a>
-<a class="sourceLine" id="cb54-6" data-line-number="6">wrtPos pos pt dim rel <span class="fu">=</span> <span class="dt">Indentation</span></a>
-<a class="sourceLine" id="cb54-7" data-line-number="7">  { relation <span class="fu">=</span> \_ range <span class="ot">-&gt;</span></a>
-<a class="sourceLine" id="cb54-8" data-line-number="8">      getRel rel (getDim dim pos) (getDim dim <span class="fu">$</span> getPt pt range)</a>
-<a class="sourceLine" id="cb54-9" data-line-number="9">  , message <span class="fu">=</span> \_ range <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb54-5" data-line-number="5">  <span class="ot">=&gt;</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Indentation</span> t</a>
+<a class="sourceLine" id="cb54-6" data-line-number="6">wrtRef pt dim rel <span class="fu">=</span> <span class="dt">Indentation</span></a>
+<a class="sourceLine" id="cb54-7" data-line-number="7">  { relation <span class="fu">=</span> \ref range <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb54-8" data-line-number="8">      getRel rel (getDim dim ref) (getDim dim <span class="fu">$</span> getPt pt range)</a>
+<a class="sourceLine" id="cb54-9" data-line-number="9">  , message <span class="fu">=</span> \ref range <span class="ot">-&gt;</span></a>
 <a class="sourceLine" id="cb54-10" data-line-number="10">      <span class="kw">let</span></a>
 <a class="sourceLine" id="cb54-11" data-line-number="11">        labelRef <span class="fu">=</span> <span class="kw">if</span> compareRef rel</a>
-<a class="sourceLine" id="cb54-12" data-line-number="12">          <span class="kw">then</span> [ <span class="st">&quot;that of position&quot;</span>, pretty pos ]</a>
+<a class="sourceLine" id="cb54-12" data-line-number="12">          <span class="kw">then</span> [ <span class="st">&quot;that of the reference position at&quot;</span>, pretty ref ]</a>
 <a class="sourceLine" id="cb54-13" data-line-number="13">          <span class="kw">else</span> []</a>
 <a class="sourceLine" id="cb54-14" data-line-number="14">      <span class="kw">in</span></a>
 <a class="sourceLine" id="cb54-15" data-line-number="15">        unwords <span class="fu">$</span></a>
@@ -1023,68 +1013,88 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb54-17" data-line-number="17">          , (pretty <span class="fu">$</span> getPt pt range) <span class="fu">++</span> <span class="st">&quot;,&quot;</span>, <span class="st">&quot;to&quot;</span>, labelRel rel</a>
 <a class="sourceLine" id="cb54-18" data-line-number="18">          ] <span class="fu">++</span> labelRef</a>
 <a class="sourceLine" id="cb54-19" data-line-number="19">  }</a></code></pre></div>
+<p><code>wrtPos</code> is almost identical, but rather than the reference position, compares against a specified <code>Pos</code> value.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb55-1" data-line-number="1"><span class="co">-- | Constructs a simple indentation strategy with respect to the</span></a>
+<a class="sourceLine" id="cb55-2" data-line-number="2"><span class="co">--   given position.</span></a>
+<a class="sourceLine" id="cb55-3" data-line-number="3">wrtPos</a>
+<a class="sourceLine" id="cb55-4" data-line-number="4"><span class="ot">  ::</span> (<span class="dt">Token</span> t, <span class="dt">Pretty</span> t)</a>
+<a class="sourceLine" id="cb55-5" data-line-number="5">  <span class="ot">=&gt;</span> <span class="dt">Pos</span> t <span class="ot">-&gt;</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Indentation</span> t</a>
+<a class="sourceLine" id="cb55-6" data-line-number="6">wrtPos pos pt dim rel <span class="fu">=</span> <span class="dt">Indentation</span></a>
+<a class="sourceLine" id="cb55-7" data-line-number="7">  { relation <span class="fu">=</span> \_ range <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb55-8" data-line-number="8">      getRel rel (getDim dim pos) (getDim dim <span class="fu">$</span> getPt pt range)</a>
+<a class="sourceLine" id="cb55-9" data-line-number="9">  , message <span class="fu">=</span> \_ range <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb55-10" data-line-number="10">      <span class="kw">let</span></a>
+<a class="sourceLine" id="cb55-11" data-line-number="11">        labelRef <span class="fu">=</span> <span class="kw">if</span> compareRef rel</a>
+<a class="sourceLine" id="cb55-12" data-line-number="12">          <span class="kw">then</span> [ <span class="st">&quot;that of position&quot;</span>, pretty pos ]</a>
+<a class="sourceLine" id="cb55-13" data-line-number="13">          <span class="kw">else</span> []</a>
+<a class="sourceLine" id="cb55-14" data-line-number="14">      <span class="kw">in</span></a>
+<a class="sourceLine" id="cb55-15" data-line-number="15">        unwords <span class="fu">$</span></a>
+<a class="sourceLine" id="cb55-16" data-line-number="16">          [ labelPt pt, labelDim dim, <span class="st">&quot;of successful parse, at&quot;</span></a>
+<a class="sourceLine" id="cb55-17" data-line-number="17">          , (pretty <span class="fu">$</span> getPt pt range) <span class="fu">++</span> <span class="st">&quot;,&quot;</span>, <span class="st">&quot;to&quot;</span>, labelRel rel</a>
+<a class="sourceLine" id="cb55-18" data-line-number="18">          ] <span class="fu">++</span> labelRef</a>
+<a class="sourceLine" id="cb55-19" data-line-number="19">  }</a></code></pre></div>
 <p>These helper functions are only needed by <code>wrtRef</code> and <code>wrtPos</code>, and aren’t part of the library proper.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb55-1" data-line-number="1"><span class="ot">getPt ::</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> (<span class="dt">Pos</span> t, <span class="dt">Pos</span> t) <span class="ot">-&gt;</span> <span class="dt">Pos</span> t</a>
-<a class="sourceLine" id="cb55-2" data-line-number="2">getPt pt <span class="fu">=</span> <span class="kw">case</span> pt <span class="kw">of</span> <span class="dt">Start</span> <span class="ot">-&gt;</span> fst; <span class="dt">End</span> <span class="ot">-&gt;</span> snd</a>
-<a class="sourceLine" id="cb55-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb55-4" data-line-number="4"><span class="ot">getDim ::</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">Pos</span> t <span class="ot">-&gt;</span> <span class="dt">Integer</span></a>
-<a class="sourceLine" id="cb55-5" data-line-number="5">getDim dim <span class="fu">=</span> <span class="kw">case</span> dim <span class="kw">of</span> <span class="dt">Column</span> <span class="ot">-&gt;</span> column; <span class="dt">Line</span> <span class="ot">-&gt;</span> line</a>
-<a class="sourceLine" id="cb55-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb55-7" data-line-number="7"><span class="ot">getRel ::</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
-<a class="sourceLine" id="cb55-8" data-line-number="8">getRel rel <span class="fu">=</span> <span class="kw">case</span> rel <span class="kw">of</span></a>
-<a class="sourceLine" id="cb55-9" data-line-number="9">  <span class="dt">Eq</span>    <span class="ot">-&gt;</span> (<span class="fu">==</span>)</a>
-<a class="sourceLine" id="cb55-10" data-line-number="10">  <span class="dt">Neq</span>   <span class="ot">-&gt;</span> (<span class="fu">/=</span>)</a>
-<a class="sourceLine" id="cb55-11" data-line-number="11">  <span class="dt">Lt</span>    <span class="ot">-&gt;</span> (<span class="fu">&lt;</span>)</a>
-<a class="sourceLine" id="cb55-12" data-line-number="12">  <span class="dt">Leq</span>   <span class="ot">-&gt;</span> (<span class="fu">&lt;=</span>)</a>
-<a class="sourceLine" id="cb55-13" data-line-number="13">  <span class="dt">Gt</span>    <span class="ot">-&gt;</span> (<span class="fu">&gt;</span>)</a>
-<a class="sourceLine" id="cb55-14" data-line-number="14">  <span class="dt">Geq</span>   <span class="ot">-&gt;</span> (<span class="fu">&gt;=</span>)</a>
-<a class="sourceLine" id="cb55-15" data-line-number="15">  <span class="dt">Add</span> k <span class="ot">-&gt;</span> \u v <span class="ot">-&gt;</span> v <span class="fu">==</span> u<span class="fu">+</span>k</a>
-<a class="sourceLine" id="cb55-16" data-line-number="16">  <span class="dt">Fix</span> k <span class="ot">-&gt;</span> \_ v <span class="ot">-&gt;</span> v <span class="fu">==</span> k</a>
-<a class="sourceLine" id="cb55-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb55-18" data-line-number="18"><span class="ot">labelPt ::</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb55-19" data-line-number="19">labelPt pt <span class="fu">=</span> <span class="kw">case</span> pt <span class="kw">of</span> <span class="dt">Start</span> <span class="ot">-&gt;</span> <span class="st">&quot;start&quot;</span>; <span class="dt">End</span> <span class="ot">-&gt;</span> <span class="st">&quot;end&quot;</span></a>
-<a class="sourceLine" id="cb55-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb55-21" data-line-number="21"><span class="ot">labelDim ::</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb55-22" data-line-number="22">labelDim dim <span class="fu">=</span> <span class="kw">case</span> dim <span class="kw">of</span> <span class="dt">Column</span> <span class="ot">-&gt;</span> <span class="st">&quot;column&quot;</span>; <span class="dt">Line</span> <span class="ot">-&gt;</span> <span class="st">&quot;Line&quot;</span></a>
-<a class="sourceLine" id="cb55-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb55-24" data-line-number="24"><span class="ot">labelRel ::</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb55-25" data-line-number="25">labelRel rel <span class="fu">=</span> <span class="kw">case</span> rel <span class="kw">of</span></a>
-<a class="sourceLine" id="cb55-26" data-line-number="26">  <span class="dt">Eq</span>    <span class="ot">-&gt;</span> <span class="st">&quot;equal&quot;</span></a>
-<a class="sourceLine" id="cb55-27" data-line-number="27">  <span class="dt">Neq</span>   <span class="ot">-&gt;</span> <span class="st">&quot;not equal&quot;</span></a>
-<a class="sourceLine" id="cb55-28" data-line-number="28">  <span class="dt">Lt</span>    <span class="ot">-&gt;</span> <span class="st">&quot;be less than&quot;</span></a>
-<a class="sourceLine" id="cb55-29" data-line-number="29">  <span class="dt">Leq</span>   <span class="ot">-&gt;</span> <span class="st">&quot;be less than or equal to&quot;</span></a>
-<a class="sourceLine" id="cb55-30" data-line-number="30">  <span class="dt">Gt</span>    <span class="ot">-&gt;</span> <span class="st">&quot;be greater than&quot;</span></a>
-<a class="sourceLine" id="cb55-31" data-line-number="31">  <span class="dt">Geq</span>   <span class="ot">-&gt;</span> <span class="st">&quot;be greater than or equal to&quot;</span></a>
-<a class="sourceLine" id="cb55-32" data-line-number="32">  <span class="dt">Add</span> k <span class="ot">-&gt;</span> <span class="kw">case</span> compare k <span class="dv">0</span> <span class="kw">of</span></a>
-<a class="sourceLine" id="cb55-33" data-line-number="33">    <span class="dt">GT</span> <span class="ot">-&gt;</span> <span class="st">&quot;be exactly &quot;</span> <span class="fu">++</span> show k <span class="fu">++</span> <span class="st">&quot; more than&quot;</span></a>
-<a class="sourceLine" id="cb55-34" data-line-number="34">    <span class="dt">EQ</span> <span class="ot">-&gt;</span> <span class="st">&quot;equal&quot;</span></a>
-<a class="sourceLine" id="cb55-35" data-line-number="35">    <span class="dt">LT</span> <span class="ot">-&gt;</span> <span class="st">&quot;be exactly &quot;</span> <span class="fu">++</span> show (<span class="fu">-</span>k) <span class="fu">++</span> <span class="st">&quot; less than&quot;</span></a>
-<a class="sourceLine" id="cb55-36" data-line-number="36">  <span class="dt">Fix</span> k <span class="ot">-&gt;</span> <span class="st">&quot;be exactly &quot;</span> <span class="fu">++</span> show k</a>
-<a class="sourceLine" id="cb55-37" data-line-number="37"></a>
-<a class="sourceLine" id="cb55-38" data-line-number="38"><span class="ot">compareRef ::</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
-<a class="sourceLine" id="cb55-39" data-line-number="39">compareRef rel <span class="fu">=</span> <span class="kw">case</span> rel <span class="kw">of</span> <span class="dt">Fix</span> _ <span class="ot">-&gt;</span> <span class="dt">False</span>; _ <span class="ot">-&gt;</span> <span class="dt">True</span></a></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb56-1" data-line-number="1"><span class="ot">getPt ::</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> (<span class="dt">Pos</span> t, <span class="dt">Pos</span> t) <span class="ot">-&gt;</span> <span class="dt">Pos</span> t</a>
+<a class="sourceLine" id="cb56-2" data-line-number="2">getPt pt <span class="fu">=</span> <span class="kw">case</span> pt <span class="kw">of</span> <span class="dt">Start</span> <span class="ot">-&gt;</span> fst; <span class="dt">End</span> <span class="ot">-&gt;</span> snd</a>
+<a class="sourceLine" id="cb56-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb56-4" data-line-number="4"><span class="ot">getDim ::</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">Pos</span> t <span class="ot">-&gt;</span> <span class="dt">Integer</span></a>
+<a class="sourceLine" id="cb56-5" data-line-number="5">getDim dim <span class="fu">=</span> <span class="kw">case</span> dim <span class="kw">of</span> <span class="dt">Column</span> <span class="ot">-&gt;</span> column; <span class="dt">Line</span> <span class="ot">-&gt;</span> line</a>
+<a class="sourceLine" id="cb56-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb56-7" data-line-number="7"><span class="ot">getRel ::</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb56-8" data-line-number="8">getRel rel <span class="fu">=</span> <span class="kw">case</span> rel <span class="kw">of</span></a>
+<a class="sourceLine" id="cb56-9" data-line-number="9">  <span class="dt">Eq</span>    <span class="ot">-&gt;</span> (<span class="fu">==</span>)</a>
+<a class="sourceLine" id="cb56-10" data-line-number="10">  <span class="dt">Neq</span>   <span class="ot">-&gt;</span> (<span class="fu">/=</span>)</a>
+<a class="sourceLine" id="cb56-11" data-line-number="11">  <span class="dt">Lt</span>    <span class="ot">-&gt;</span> (<span class="fu">&lt;</span>)</a>
+<a class="sourceLine" id="cb56-12" data-line-number="12">  <span class="dt">Leq</span>   <span class="ot">-&gt;</span> (<span class="fu">&lt;=</span>)</a>
+<a class="sourceLine" id="cb56-13" data-line-number="13">  <span class="dt">Gt</span>    <span class="ot">-&gt;</span> (<span class="fu">&gt;</span>)</a>
+<a class="sourceLine" id="cb56-14" data-line-number="14">  <span class="dt">Geq</span>   <span class="ot">-&gt;</span> (<span class="fu">&gt;=</span>)</a>
+<a class="sourceLine" id="cb56-15" data-line-number="15">  <span class="dt">Add</span> k <span class="ot">-&gt;</span> \u v <span class="ot">-&gt;</span> v <span class="fu">==</span> u<span class="fu">+</span>k</a>
+<a class="sourceLine" id="cb56-16" data-line-number="16">  <span class="dt">Fix</span> k <span class="ot">-&gt;</span> \_ v <span class="ot">-&gt;</span> v <span class="fu">==</span> k</a>
+<a class="sourceLine" id="cb56-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb56-18" data-line-number="18"><span class="ot">labelPt ::</span> <span class="dt">Endpoint</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb56-19" data-line-number="19">labelPt pt <span class="fu">=</span> <span class="kw">case</span> pt <span class="kw">of</span> <span class="dt">Start</span> <span class="ot">-&gt;</span> <span class="st">&quot;start&quot;</span>; <span class="dt">End</span> <span class="ot">-&gt;</span> <span class="st">&quot;end&quot;</span></a>
+<a class="sourceLine" id="cb56-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb56-21" data-line-number="21"><span class="ot">labelDim ::</span> <span class="dt">Dimension</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb56-22" data-line-number="22">labelDim dim <span class="fu">=</span> <span class="kw">case</span> dim <span class="kw">of</span> <span class="dt">Column</span> <span class="ot">-&gt;</span> <span class="st">&quot;column&quot;</span>; <span class="dt">Line</span> <span class="ot">-&gt;</span> <span class="st">&quot;Line&quot;</span></a>
+<a class="sourceLine" id="cb56-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb56-24" data-line-number="24"><span class="ot">labelRel ::</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb56-25" data-line-number="25">labelRel rel <span class="fu">=</span> <span class="kw">case</span> rel <span class="kw">of</span></a>
+<a class="sourceLine" id="cb56-26" data-line-number="26">  <span class="dt">Eq</span>    <span class="ot">-&gt;</span> <span class="st">&quot;equal&quot;</span></a>
+<a class="sourceLine" id="cb56-27" data-line-number="27">  <span class="dt">Neq</span>   <span class="ot">-&gt;</span> <span class="st">&quot;not equal&quot;</span></a>
+<a class="sourceLine" id="cb56-28" data-line-number="28">  <span class="dt">Lt</span>    <span class="ot">-&gt;</span> <span class="st">&quot;be less than&quot;</span></a>
+<a class="sourceLine" id="cb56-29" data-line-number="29">  <span class="dt">Leq</span>   <span class="ot">-&gt;</span> <span class="st">&quot;be less than or equal to&quot;</span></a>
+<a class="sourceLine" id="cb56-30" data-line-number="30">  <span class="dt">Gt</span>    <span class="ot">-&gt;</span> <span class="st">&quot;be greater than&quot;</span></a>
+<a class="sourceLine" id="cb56-31" data-line-number="31">  <span class="dt">Geq</span>   <span class="ot">-&gt;</span> <span class="st">&quot;be greater than or equal to&quot;</span></a>
+<a class="sourceLine" id="cb56-32" data-line-number="32">  <span class="dt">Add</span> k <span class="ot">-&gt;</span> <span class="kw">case</span> compare k <span class="dv">0</span> <span class="kw">of</span></a>
+<a class="sourceLine" id="cb56-33" data-line-number="33">    <span class="dt">GT</span> <span class="ot">-&gt;</span> <span class="st">&quot;be exactly &quot;</span> <span class="fu">++</span> show k <span class="fu">++</span> <span class="st">&quot; more than&quot;</span></a>
+<a class="sourceLine" id="cb56-34" data-line-number="34">    <span class="dt">EQ</span> <span class="ot">-&gt;</span> <span class="st">&quot;equal&quot;</span></a>
+<a class="sourceLine" id="cb56-35" data-line-number="35">    <span class="dt">LT</span> <span class="ot">-&gt;</span> <span class="st">&quot;be exactly &quot;</span> <span class="fu">++</span> show (<span class="fu">-</span>k) <span class="fu">++</span> <span class="st">&quot; less than&quot;</span></a>
+<a class="sourceLine" id="cb56-36" data-line-number="36">  <span class="dt">Fix</span> k <span class="ot">-&gt;</span> <span class="st">&quot;be exactly &quot;</span> <span class="fu">++</span> show k</a>
+<a class="sourceLine" id="cb56-37" data-line-number="37"></a>
+<a class="sourceLine" id="cb56-38" data-line-number="38"><span class="ot">compareRef ::</span> <span class="dt">Relation</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb56-39" data-line-number="39">compareRef rel <span class="fu">=</span> <span class="kw">case</span> rel <span class="kw">of</span> <span class="dt">Fix</span> _ <span class="ot">-&gt;</span> <span class="dt">False</span>; _ <span class="ot">-&gt;</span> <span class="dt">True</span></a></code></pre></div>
 <p>Now we can build indentation strategies by saying things like this:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb56-1" data-line-number="1"><span class="co">-- must start on the same column as the reference position</span></a>
-<a class="sourceLine" id="cb56-2" data-line-number="2">wrtRef <span class="dt">Start</span> <span class="dt">Column</span> <span class="dt">Eq</span></a>
-<a class="sourceLine" id="cb56-3" data-line-number="3"><span class="ot">  ::</span> <span class="dt">Indentation</span></a>
-<a class="sourceLine" id="cb56-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb56-5" data-line-number="5"><span class="co">-- must start on a later line than position u</span></a>
-<a class="sourceLine" id="cb56-6" data-line-number="6">indent (wrtPos u <span class="dt">Start</span> <span class="dt">Line</span> <span class="dt">Gt</span>)</a>
-<a class="sourceLine" id="cb56-7" data-line-number="7"><span class="ot">  ::</span> (<span class="dt">Stream</span> s) <span class="ot">=&gt;</span> <span class="dt">Parser</span> s a <span class="ot">-&gt;</span> <span class="dt">Parser</span> s a</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb57-1" data-line-number="1"><span class="co">-- must start on the same column as the reference position</span></a>
+<a class="sourceLine" id="cb57-2" data-line-number="2">wrtRef <span class="dt">Start</span> <span class="dt">Column</span> <span class="dt">Eq</span></a>
+<a class="sourceLine" id="cb57-3" data-line-number="3"><span class="ot">  ::</span> <span class="dt">Indentation</span></a>
+<a class="sourceLine" id="cb57-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb57-5" data-line-number="5"><span class="co">-- must start on a later line than position u</span></a>
+<a class="sourceLine" id="cb57-6" data-line-number="6">indent (wrtPos u <span class="dt">Start</span> <span class="dt">Line</span> <span class="dt">Gt</span>)</a>
+<a class="sourceLine" id="cb57-7" data-line-number="7"><span class="ot">  ::</span> (<span class="dt">Stream</span> s) <span class="ot">=&gt;</span> <span class="dt">Parser</span> s a <span class="ot">-&gt;</span> <span class="dt">Parser</span> s a</a></code></pre></div>
 <p>These read <em>almost</em> like normal language – “with respect to the reference, the start column is equal”. Fun!</p>
 <h2 id="usage-overview">Usage Overview</h2>
 <p>Here’s the library documentation for inclusion on hackage.</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb57-1" data-line-number="1"><span class="co">-- $overview</span></a>
-<a class="sourceLine" id="cb57-2" data-line-number="2"><span class="co">--</span></a>
-<a class="sourceLine" id="cb57-3" data-line-number="3"><span class="co">-- This library implements monadic parser combinators in the style of</span></a>
-<a class="sourceLine" id="cb57-4" data-line-number="4"><span class="co">-- Parsec, but with a couple of tweaks. The major differences are</span></a>
-<a class="sourceLine" id="cb57-5" data-line-number="5"><span class="co">-- as follows.</span></a>
-<a class="sourceLine" id="cb57-6" data-line-number="6"><span class="co">--</span></a>
-<a class="sourceLine" id="cb57-7" data-line-number="7"><span class="co">--   * The @\&lt;|&gt;@ operator from the @Alternative@ class gives the</span></a>
-<a class="sourceLine" id="cb57-8" data-line-number="8"><span class="co">--     PEG-style /ordered choice/; @p \&lt;|&gt; q@ attempts @p@, and</span></a>
-<a class="sourceLine" id="cb57-9" data-line-number="9"><span class="co">--     if this fails, pretends that @p@ did not consume input and</span></a>
-<a class="sourceLine" id="cb57-10" data-line-number="10"><span class="co">--     attempts @q@.</span></a>
-<a class="sourceLine" id="cb57-11" data-line-number="11"><span class="co">--</span></a>
-<a class="sourceLine" id="cb57-12" data-line-number="12"><span class="co">--   * There is a family of /indentation sensitive/ combinators.</span></a></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb58-1" data-line-number="1"><span class="co">-- $overview</span></a>
+<a class="sourceLine" id="cb58-2" data-line-number="2"><span class="co">--</span></a>
+<a class="sourceLine" id="cb58-3" data-line-number="3"><span class="co">-- This library implements monadic parser combinators in the style of</span></a>
+<a class="sourceLine" id="cb58-4" data-line-number="4"><span class="co">-- Parsec, but with a couple of tweaks. The major differences are</span></a>
+<a class="sourceLine" id="cb58-5" data-line-number="5"><span class="co">-- as follows.</span></a>
+<a class="sourceLine" id="cb58-6" data-line-number="6"><span class="co">--</span></a>
+<a class="sourceLine" id="cb58-7" data-line-number="7"><span class="co">--   * The @\&lt;|&gt;@ operator from the @Alternative@ class gives the</span></a>
+<a class="sourceLine" id="cb58-8" data-line-number="8"><span class="co">--     PEG-style /ordered choice/; @p \&lt;|&gt; q@ attempts @p@, and</span></a>
+<a class="sourceLine" id="cb58-9" data-line-number="9"><span class="co">--     if this fails, pretends that @p@ did not consume input and</span></a>
+<a class="sourceLine" id="cb58-10" data-line-number="10"><span class="co">--     attempts @q@.</span></a>
+<a class="sourceLine" id="cb58-11" data-line-number="11"><span class="co">--</span></a>
+<a class="sourceLine" id="cb58-12" data-line-number="12"><span class="co">--   * There is a family of /indentation sensitive/ combinators.</span></a></code></pre></div>
 </body>
 </html>
