@@ -21,7 +21,16 @@ testing :: IO ()
 
 Code that is part of the library appears on a gray background, like this block of compiler noises.
 
-> {-# LANGUAGE ExistentialQuantification, ScopedTypeVariables #-}
+> {-#
+>   LANGUAGE
+>     ExplicitForAll,
+>     FlexibleContexts,
+>     FlexibleInstances,
+>     ScopedTypeVariables,
+>     UndecidableInstances,
+>     ExistentialQuantification
+> #-}
+> 
 > {-|
 > Module      : Text.ParserCombinators.Munch
 > Description : Simple parser combinator library
@@ -33,15 +42,17 @@ Code that is part of the library appears on a gray background, like this block o
 > 
 > Parser combinator library with support for indentation sensitivity.
 > -}
+> 
 > module Text.ParserCombinators.Munch (
 >     -- * Usage
 >     -- $overview
 >     Parser(), runParser, debugParser, parseIO
->   , Stream(..), Pos(..), DidConsume(..), CharStream()
+>   , Stream(), toStream, Token(..), Pos(..), DidConsume(..)
 >     -- * Basic Parsers
->   , char, bof, eof, satisfies, wouldFail, wouldSucceed, anyChar
->   , decimalDigit, hexDigit, lowerLatin, upperLatin, spaces, newline
+>   , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed
 >   , choice, manySepBy, someSepBy, string
+>     -- ** @Char@
+>   , char, newline, spaces, decimalDigit, hexDigit, lowerLatin, upperLatin
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -58,9 +69,11 @@ Code that is part of the library appears on a gray background, like this block o
 > import Data.List (intersperse, unwords)
 > import Data.Semigroup
 > import Data.String
+> import Data.Word (Word8)
 > import Control.Applicative
 > import Control.Monad
 > import qualified Control.Monad.Fail as F
+> import Numeric (showHex)
 
 
 
@@ -70,7 +83,8 @@ Contents
 * The Library
   * [Getting Started](#getting-started)
   * [Basic Combinators](#basic-combinators)
-  * [Simple Streams](#simple-streams)
+  * [Simple Tokens](#simple-tokens)
+  * [Derived Combinators](#derived-combinators)
   * [Indentation](#indentation)
   * [Errors](#errors)
   * [Permutation Phrases](#permutation-phrases)
@@ -116,17 +130,17 @@ parse :: String -> (DidConsume, Either ParseError (a, String))
 The `DidConsume` type is defined like so.
 
 > -- | Represents whether a parser consumed part of the input stream.
-> data DidConsume
->   = Declined         -- ^ The parse did not consume any characters.
->   | Consumed Pos Pos -- ^ The parse consumed input characters
->                      --   between two positions (inclusive).
+> data DidConsume t
+>   = Declined                 -- ^ The parse did not consume any characters.
+>   | Consumed (Pos t) (Pos t) -- ^ The parse consumed input characters
+>                              --   between two positions (inclusive).
 >   deriving Show
 > 
 > -- | @Pos@ represents a position in the input stream consisting of
 > --   a /line number/ and a /column number/, both of which are
 > --   nonnegative integers. The @Ord@ instance is lexicographic by
 > --   line, then column. 
-> data Pos = Pos
+> data Pos t = Pos
 >   { line :: Integer
 >   , column :: Integer
 >   } deriving (Eq, Ord, Show)
@@ -136,44 +150,68 @@ Note that "parse consumed characters" and "parse succeeded" are orthogonal. This
 > -- | The product of two @Consumed@ ranges is their convex hull. This is
 > --   the direct product of the @min@ and @max@ semigroups over @Integer@
 > --   with a unit attached.
-> instance Semigroup DidConsume where
+> instance Semigroup (DidConsume t) where
 >   Declined       <> Declined       = Declined
 >   Consumed a1 b1 <> Declined       = Consumed a1 b1
 >   Declined       <> Consumed a2 b2 = Consumed a2 b2
 >   Consumed a1 b1 <> Consumed a2 b2 = Consumed (min a1 a2) (max b1 b2)
 > 
-> instance Monoid DidConsume where
+> instance Monoid (DidConsume t) where
 >   mempty  = Declined
 >   mappend = (<>)
 
 This sort of makes sense; in the typical case where two ranges are directly adjacent, the convex hull is the same as concatenation. Note that this is a bona fide `Monoid` since it is (isomorphic to) the direct product of the min and max semigroups over `Integer` with a unit attached. Note, however, that we're not making any assumptions about whether the "left" endpoint in a consumed range comes before the "right" endpoint -- and if that's the case this isn't really computing the convex hull, although this shouldn't happen in practice.
 
-Parsec makes one more basic adjustment to this type: rather than parsing `String`s, it parses values of any type satisfying a `Stream` class...
+Parsec makes one more basic adjustment to this type: rather than parsing `String`s, it parses values of any type satisfying a `Stream` class. We will do something similar, but to simplify matters rather than abstracting over the _stream_ we'll just abstract over the _token_ type. Streams will all be modeled as lists of tokens together with the `Pos` of the first token.
 
-```haskell
-parser :: (Stream s) => s -> (DidConsume, Either ParseError (a, s))
-```
-
-...which we'll define like so.
-
-> -- | Class representing types of "parseable" text.
-> class Stream s where
->   -- | If any characters remain in the stream, returns the
->   --   first one with its position and the rest of the stream.
->   uncons :: s -> Maybe (Char, Pos, s)
+> data Stream t = Stream (Pos t) [t]
 > 
 > -- | @True@ if there are no characters left in the stream.
-> isEmpty :: (Stream s) => s -> Bool
-> isEmpty stream = case uncons stream of
->   Nothing -> True
->   Just _ -> False
+> isEmpty :: Stream t -> Bool
+> isEmpty (Stream _ xs) = null xs
 > 
 > -- | @Just@ the @Pos@ at the head of the stream, or @Nothing@
 > --   if the stream is empty.
-> pointer :: (Stream s) => s -> Maybe Pos
-> pointer = fmap (\(_, pos, _) -> pos) . uncons
+> pointer :: Stream t -> Maybe (Pos t)
+> pointer (Stream pos xs) = case xs of
+>   [] -> Nothing
+>   _  -> Just pos
 
-Essentially a type is a _stream_ if it makes sense to pop `Char`s from it in some canonical order -- `String` is not a great data structure if we care a lot about efficiency, so it's nice to make it optional.
+The `t` type represents our tokens. So our parsers will have a type like this:
+
+```haskell
+parser :: (Token t) => Stream t -> (DidConsume, Either ParseError (a, Stream t))
+```
+
+But what exactly should be special about tokens? The most important thing we will do with streams is read the head token (if it exists) and return the remaining stream. This will require _updating_ the head position, typically taking into account which token was taken. We also need a canonical choice for the _initial_ position for a given token type.
+
+With this in mind, we define the `Token` class like so.
+
+> -- | Class representing types of "parseable" tokens.
+> class Token t where
+>   -- | Initial token position
+>   initPos :: Pos t
+> 
+>   -- | Given a token and a position, update to a new position.
+>   updatePos :: t -> Pos t -> Pos t
+> 
+>   -- | Token specific pretty printer for @Pos@s
+>   formatPos :: Pos t -> String
+
+With these functions in hand, we can define `toStream` and `popToken` for arbitrary token types.
+
+> -- | Construct a stream from a list, using `initPos`.
+> toStream :: (Token t) => [t] -> Stream t
+> toStream = Stream initPos
+> 
+> -- | If any characters remain in the stream, returns the
+> --   first one with its position and the rest of the stream.
+> popToken :: (Token t) => Stream t -> Maybe (t, Pos t, Stream t)
+> popToken (Stream pos xs) = case xs of
+>   []   -> Nothing
+>   z:zs -> Just (z, pos, Stream (updatePos z pos) zs)
+
+From this point of view, `Pos` is what makes token streams interesting -- they have a natural "first" position, used by `toStream`, and given a token, we can update to a natural "next" token. For instance, when parsing text positions are line and column numbers, but when parsing binary data positions are byte offsets.
 
 I'm going to make one final adjustment to the parser type to accommodate _indentation sensitive parsing_. While writing this up, I read the Adams and Ağacan paper on parsing indentation, and have to admit I wasn't able to get it to work -- which, to be clear, is entirely my failing. That paper is a nice read and has some really good ideas. Although I couldn't get the exact implementation working, I will take inspiration and try to add indentation-sensitivity to this library. And since we're basically reimplementing parsec from scratch we can afford to sidestep some of the compromises that paper has to make as a result of trying to integrate with existing code.
 
@@ -187,21 +225,31 @@ So our final parser type looks like this. Note how `Pos` only appears on the lef
 > --   producing a value of type `a`. Parsers are built up using
 > --   the @Applicative@, @Alternative@, and @Monad@ interfaces
 > --   and the atomic parsers defined in this module.
-> data Parser s a = Parser
->   { theParser :: Pos -> s -> (DidConsume, Either ParseError (a, s)) }
+> data Parser t a = Parser
+>   { theParser
+>       :: Pos t
+>       -> Stream t
+>       -> ( DidConsume t
+>          , Either (ParseError t) (a, Stream t)
+>          )
+>   }
 
 Last but not least we sometimes need to actually _run_ a parser, and since parsers are just functions that that means evaluate. We'll do this in three ways: one that returns all the gory details, one that just returns a result, and one that just pretty prints the result.
 
 > -- | Run a parser against a stream, returning the result as well
 > --   as the consumed range and the remaining stream.
 > debugParser
->   :: Parser s a -> s -> (DidConsume, Either ParseError (a, s))
-> debugParser (Parser q) stream = q (Pos 1 1) stream
+>   :: (Token t)
+>   => Parser t a
+>   -> Stream t
+>   -> (DidConsume t, Either (ParseError t) (a, Stream t))
+> debugParser (Parser q) stream = q initPos stream
 > 
 > -- | Run a parser against a stream, returning only the result.
 > runParser
->   :: (Stream s) => Parser s a -> s -> Either ParseError a
-> runParser (Parser q) stream = case q (Pos 1 1) stream of
+>   :: (Token t)
+>   => Parser t a -> Stream t -> Either (ParseError t) a
+> runParser (Parser q) stream = case q initPos stream of
 >   (_, Left err) -> Left err
 >   (_, Right (a, rest)) -> if isEmpty rest
 >     then Right a
@@ -209,8 +257,9 @@ Last but not least we sometimes need to actually _run_ a parser, and since parse
 > 
 > -- | Pretty print the result of a parse.
 > parseIO
->   :: (Stream s, Show a) => Parser s a -> s -> IO ()
-> parseIO (Parser q) stream = case q (Pos 1 1) stream of
+>   :: (Token t, Pretty t, Show a)
+>   => Parser t a -> Stream t -> IO ()
+> parseIO (Parser q) stream = case q initPos stream of
 >   (_, Left err) -> do
 >     putStrLn "Parse Error"
 >     putStrLn $ pretty err
@@ -229,14 +278,14 @@ Basic Combinators
 
 The `Parser s` type constructor is defined as a stack of monads -- state, error, writer, and reader. When this happens our first instinct should be to write the monad implementation, because this gives us a huge amount of code for free. This part is mostly standard stuff.
 
-> instance Functor (Parser s) where
+> instance Functor (Parser t) where
 >   fmap f (Parser q) = Parser $ \ref stream ->
 >     let (c, result) = q ref stream in
 >     case result of
 >       Left err -> (c, Left err)
 >       Right (a, rest) -> (c, Right (f a, rest))
 > 
-> instance Applicative (Parser s) where
+> instance Applicative (Parser t) where
 >   pure x = Parser $ \_ stream ->
 >     (Declined, Right (x, stream))
 > 
@@ -252,7 +301,7 @@ The implementation of the `<|>` operator in the `Alternative` instance represent
 > --   try the right parser. If both fail we report a combination of
 > --   their error messages. @empty@ represents a generic failure. It's
 > --   included for completeness but should usually be avoided.
-> instance Alternative (Parser s) where
+> instance Alternative (Parser t) where
 >   -- generic failure
 >   empty = Parser $ \_ _ ->
 >     (Declined, Left mempty)
@@ -267,7 +316,7 @@ The implementation of the `<|>` operator in the `Alternative` instance represent
 
 The `>>` operator in the `Monad` instance represents PEG style sequencing.
 
-> instance Monad (Parser s) where
+> instance Monad (Parser t) where
 >   return = pure
 > 
 >   (Parser x) >>= f = Parser $ \ref stream ->
@@ -285,54 +334,54 @@ The `>>` operator in the `Monad` instance represents PEG style sequencing.
 >         in (c1 <> c2, h)
 > 
 > -- | Default instance in terms of @Alternative@.
-> instance MonadPlus (Parser s)
+> instance MonadPlus (Parser t)
 
 We can also give a `MonadFail` instance. This typeclass isn't as "natural" as `Functor` and `Monad`, but `fail` is a really useful utility -- it lets us stop the world and fail the parse for any reason.
 
-> instance (Stream s) => F.MonadFail (Parser s) where
+> instance F.MonadFail (Parser t) where
 >   fail msg = Parser $ \_ stream ->
 >     (Declined, Left $ Simply $ Failure msg (pointer stream))
 
-We can also give `Parser s a` a `Semigroup` and `Monoid` instance.
+We can also give `Parser t a` a `Semigroup` and `Monoid` instance.
 
 > -- | The @\<>@ implementation allows us to combine the results of
 > --   two parsers. Compare to @>>@, @*>@, and @<*@, which combine two
 > --   parsers but only return the result of one.
-> instance (Semigroup a) => Semigroup (Parser s a) where
+> instance (Semigroup a) => Semigroup (Parser t a) where
 >   (<>) = liftA2 (<>)
 > 
-> instance (Monoid a) => Monoid (Parser s a) where
+> instance (Monoid a) => Monoid (Parser t a) where
 >   mempty  = return mempty
 >   mappend = liftA2 mappend
 
-At this point we've already got a huge built-in library of utility functions based on `Functor`, `Applicative`, `Alternative`, and `Monad`, but not any concrete parsers (other than `return`). To address this we'll also define some atomic parsers for recognizing characters and the beginning and end of the stream.
+At this point we've already got a huge built-in library of utility functions based on `Functor`, `Applicative`, `Alternative`, and `Monad`, but not any concrete parsers (other than `return`). To address this we'll also define some atomic parsers for recognizing tokens and the beginning and end of the stream.
 
-> -- | Expects the specified character.
-> char :: (Stream s) => Char -> Parser s Char
-> char c = Parser $ \_ stream ->
->   case uncons stream of
+> -- | Expects the specified token.
+> token :: (Token t, Eq t) => t -> Parser t t
+> token c = Parser $ \_ stream ->
+>   case popToken stream of
 >     Nothing ->
 >       (Declined, Left $ Simply $ UnexpectedEOF (Right $ Just c))
 > 
 >     Just (a,pos,rest) ->
 >       if a == c
 >         then (Consumed pos pos, Right (a, rest))
->         else (Declined, Left $ Simply $ UnexpectedChar a (Just c) pos)
+>         else (Declined, Left $ Simply $ UnexpectedToken a (Just c) pos)
 > 
 > -- | Expects the end of the stream.
-> eof :: (Stream s) => Parser s ()
+> eof :: (Token t) => Parser t ()
 > eof = Parser $ \_ stream ->
->   case uncons stream of
+>   case popToken stream of
 >     Nothing ->
 >       (Declined, Right ((), stream))
 > 
 >     Just (a,pos,_) ->
->       (Declined, Left $ Simply $ UnexpectedChar a Nothing pos)
+>       (Declined, Left $ Simply $ UnexpectedToken a Nothing pos)
 > 
 > -- | Expects the beginning of the stream.
-> bof :: (Stream s) => Parser s ()
+> bof :: (Token t) => Parser t ()
 > bof = Parser $ \_ stream ->
->   case uncons stream of
+>   case popToken stream of
 >     Nothing ->
 >       (Declined, Left $ Simply $ UnexpectedEOF (Right Nothing))
 > 
@@ -341,17 +390,17 @@ At this point we've already got a huge built-in library of utility functions bas
 >         then (Declined, Right ((), stream))
 >         else (Declined, Left $ Simply $ ExpectedBOF pos)
 
-Slightly more general than `char` is `satisfies`, which accepts characters that satisfy some given predicate. In principle `satisfies` is redundant, since it can be implemented in terms of `char` and `<|>`. But in practice it makes error messages much nicer.
+Slightly more general than `token` is `satisfies`, which accepts characters that satisfy some given predicate. In principle `satisfies` is redundant, since it can be implemented in terms of `token` and `<|>`. But in practice it makes error messages much nicer.
 
 > -- | Expects a character satisfying the given predicate.
 > satisfies
->   :: (Stream s)
->   => (Char -> Bool)
+>   :: (Token t)
+>   => (t -> Bool)
 >   -> String         -- ^ Human-readable name for
->                     --   the class of recognized characters.
->   -> Parser s Char
+>                     --   the class of recognized tokens.
+>   -> Parser t t
 > satisfies p msg = Parser $ \_ stream ->
->   case uncons stream of
+>   case popToken stream of
 >     Nothing ->
 >       (Declined, Left $ Simply $ UnexpectedEOF (Left msg))
 > 
@@ -359,12 +408,16 @@ Slightly more general than `char` is `satisfies`, which accepts characters that 
 >       if p a
 >         then (Consumed pos pos, Right (a, rest))
 >         else (Declined, Left $ Simply $ UnexpectedSatisfy a msg pos)
+> 
+> -- | Expects any character.
+> anyToken :: (Token t) => Parser t t
+> anyToken = satisfies (const True) "any token"
 
 We can also define PEG-style positive and negative lookahead combinators; these allow for speculative parsing.
 
 > -- | @wouldFail p@ succeeds if and only if @p@ fails (whether
 > --   or not @p@ consumes input), but does not consume any input.
-> wouldFail :: (Stream s) => Parser s a -> Parser s ()
+> wouldFail :: (Token t) => Parser t a -> Parser t ()
 > wouldFail (Parser q) = Parser $ \ref stream ->
 >   let
 >     (_,r) = q ref stream
@@ -375,7 +428,7 @@ We can also define PEG-style positive and negative lookahead combinators; these 
 > 
 > -- | @wouldSucceed p@ succeeds if and only if @p@ succeeds, (whether
 > --   or not @p@ consumes input), but does not consume any input.
-> wouldSucceed :: (Stream s) => Parser s a -> Parser s ()
+> wouldSucceed :: (Token t) => Parser t a -> Parser t ()
 > wouldSucceed (Parser q) = Parser $ \ref stream ->
 >   let
 >     (_,r) = q ref stream
@@ -386,86 +439,89 @@ We can also define PEG-style positive and negative lookahead combinators; these 
 
 
 
-Simple Streams
---------------
+Simple Tokens
+-------------
 
-We've now more or less got a basic parser combinator library. Before we can actually use it we need an instance of `Stream`. For basic use we'll define `CharStream` -- a list of `Char`s with `Pos`s.
+We've now more or less got a basic parser combinator library. But before we can actually use it we need an instance of `Token` -- for basic use we'll define instances for `Char` (for text) and `Word8` (for binary data).
 
-> -- | Simple and unoptimized list-based stream type.
-> data CharStream
->   = CharStream [(Char, Pos)]
->   deriving Show
+> instance Token Char where
+>   updatePos c (Pos ln col) =
+>     if c == '\n'
+>       then Pos (ln+1) 1
+>       else Pos ln (col+1)
 > 
-> instance Stream CharStream where
->   uncons (CharStream str) = case str of
->     [] -> Nothing
->     (a,pos):as -> Just (a, pos, CharStream as)
+>   initPos = Pos 1 1
 > 
-> instance IsString CharStream where
->   fromString = CharStream . annotate
->     where
->       annotate :: String -> [(Char, Pos)]
->       annotate = f 1 1
->         where
->           f :: Integer -> Integer -> [Char] -> [(Char, Pos)]
->           f ln col str = case str of
->             [] -> []
->             a:as -> if a == '\n'
->               then (a, Pos ln col) : f (ln+1) 1 as
->               else (a, Pos ln col) : f ln (col+1) as
+>   formatPos (Pos ln col) = concat
+>     [ "l", show ln, "c", show col ]
 
-We'll also define some commonly used parsers.
+Some `Char` specific parsers:
 
-> -- | Expects any character.
-> anyChar :: (Stream s) => Parser s Char
-> anyChar = satisfies (const True) "any character"
+> -- | Expects the given character.
+> char :: Char -> Parser Char Char
+> char = token
+> 
+> -- | Expects a newline character.
+> newline :: Parser Char Char
+> newline = char '\n'
+> 
+> -- | Expects zero or more space characters.
+> spaces :: Parser Char String
+> spaces = many $ char ' '
 > 
 > -- | Expects a character in the range @['0'..'9']@.
-> decimalDigit :: (Stream s) => Parser s Char
+> decimalDigit :: Parser Char Char
 > decimalDigit = satisfies
 >   (\c -> elem c "0123456789")
 >   "decimal digit (0-9)"
 > 
 > -- | Expects a hexadecimal digit (0-9, a-f, A-F)
-> hexDigit :: (Stream s) => Parser s Char
+> hexDigit :: Parser Char Char
 > hexDigit = satisfies
 >   (\c -> elem c "0123456789abcdefABCDEF")
 >   "hexadecimal digit (0-9, a-f, A-F)"
 > 
 > -- | Expects a character in the range @['a'..'z']@.
-> lowerLatin :: (Stream s) => Parser s Char
+> lowerLatin :: Parser Char Char
 > lowerLatin = satisfies
 >   (\c -> elem c "abcdefghijklmnopqrstuvwxyz")
 >   "lower case latin letter (a-z)"
 > 
 > -- | Expects a character in the range @['A'..'Z']@.
-> upperLatin :: (Stream s) => Parser s Char
+> upperLatin :: Parser Char Char
 > upperLatin = satisfies
 >   (\c -> elem c "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 >   "upper case latin letter (A-Z)"
-> 
-> -- | Expects zero or more space characters.
-> spaces :: (Stream s) => Parser s String
-> spaces = many $ char ' '
-> 
-> -- | Expects a newline character.
-> newline :: (Stream s) => Parser s Char
-> newline = char '\n'
 
-And some derived combinators.
+
+
+> instance Token Word8 where
+>   updatePos _ (Pos _ offset) = Pos 0 (offset + 1)
+> 
+>   initPos = Pos 0 0
+> 
+>   formatPos (Pos _ offset) = unwords
+>     [ "offset", '0' : 'x' : showHex offset "" ]
+
+
+
+Derived Combinators
+-------------------
+
+Several handy combinators can be defined in terms of the applicative and monad interfaces.
 
 > -- | Tries the argument parsers one at a time in order,
 > --   backtracking on failure. Returns the value of the
 > --   first succeeding parser.
-> choice :: (Stream s) => [Parser s a] -> Parser s a
+> choice :: (Token t) => [Parser t a] -> Parser t a
 > choice ps = foldr (<|>) empty ps
 > 
 > -- | One or more @p@, separated by @sep@.
-> someSepBy :: Parser s u -> Parser s a -> Parser s [a]
+> someSepBy :: Parser t u -> Parser t a -> Parser t [a]
 > someSepBy sep p = (:) <$> p <*> many (sep >> p)
 > 
 > -- | Zero or more @p@, separated by @sep@.
-> manySepBy :: Parser s u -> Parser s a -> Parser s [a]
+> manySepBy :: Parser t u -> Parser t a -> Parser t [a]
 > manySepBy sep p = (someSepBy sep p) <|> return [] 
 
 
@@ -478,17 +534,17 @@ Recall that every parser runs in the context of a special `Pos` value called the
 First off, since the reference position is a reader context, we should have combinators for getting its value and making local changes: `readRef` gets the value of the reference position, `adjustRef` applies an arbitrary function to the reference in a context, and `localRef` sets it to a specific value in a context. Note that the scope of these changes is strictly limited.
 
 > -- | Returns the current reference position.
-> readRef :: (Stream s) => Parser s Pos
+> readRef :: (Token t) => Parser t (Pos t)
 > readRef = Parser $ \ref stream -> (Declined, Right (ref, stream))
 > 
 > -- | Apply a function to the reference position, and run
 > --   a parser in that context.
-> adjustRef :: (Stream s) => (Pos -> Pos) -> Parser s a -> Parser s a
+> adjustRef :: (Token t) => (Pos t -> Pos t) -> Parser t a -> Parser t a
 > adjustRef f (Parser p) = Parser $ \ref stream -> p (f ref) stream
 > 
 > -- | Set the reference position to a given value, and run
 > --   a parser in that context.
-> localRef :: (Stream s) => Pos -> Parser s a -> Parser s a
+> localRef :: (Token t) => Pos t -> Parser t a -> Parser t a
 > localRef = adjustRef . const
 
 Next it will be handy to have a combinator that returns the consumed range of characters. Thinking of `DidConsume` as the log monoid for the `Writer` monad pattern, this is analogous to the standard `listen` function, with one exception: `consume p` should fail if `p` declines to consume characters.
@@ -496,7 +552,7 @@ Next it will be handy to have a combinator that returns the consumed range of ch
 > -- | Run a parser against the stream, and return the consumed
 > --   range with the result. Fails if the parser declines to
 > --   consume any input.
-> consume :: (Stream s) => Parser s a -> Parser s (a, (Pos, Pos))
+> consume :: (Token t) => Parser t a -> Parser t (a, (Pos t, Pos t))
 > consume (Parser p) = Parser $ \ref stream ->
 >   let (c,r) = p ref stream in
 >   case c of
@@ -520,7 +576,7 @@ Similarly useful is a combinator that forces a parser to report that it did not 
 
 > -- | Run a parser against the stream, and if it succeeds,
 > --   report success but do not report the consumed range.
-> ignore :: (Stream s) => Parser s a -> Parser s ()
+> ignore :: (Token t) => Parser t a -> Parser t ()
 > ignore (Parser q) = Parser $ \ref stream ->
 >   case q ref stream of
 >     (_, Left err)       -> (Declined, Left err)
@@ -529,12 +585,12 @@ Similarly useful is a combinator that forces a parser to report that it did not 
 Recall that a parser is indentation sensitive if, when it consumes characters, there is a predicate that must be satisfied by the reference position and the range of consumed characters in order for the parse to be valid. To impose some discipline on this, we'll wrap this predicate in a type with a human-readable error message.
 
 > -- | Represents an indentation strategy.
-> data Indentation = Indentation
->   { relation :: Pos -> (Pos, Pos) -> Bool
+> data Indentation t = Indentation
+>   { relation :: Pos t -> (Pos t, Pos t) -> Bool
 >     -- ^ True if the consumed range is valid with respect
 >     --   to the reference position.
 > 
->   , message :: Pos -> (Pos, Pos) -> String
+>   , message :: Pos t -> (Pos t, Pos t) -> String
 >     -- ^ Human-readable error message for when the
 >     --   indentation is invalid.
 >   }
@@ -544,10 +600,10 @@ Now the fundamental combinator for building indentation sensitive parsers, `inde
 > -- | Run a parser and, if it succeeds, verify that the
 > --   consumed range satisfies the given indentation.
 > indent
->   :: (Stream s)
->   => Indentation
->   -> Parser s a
->   -> Parser s a
+>   :: (Token t)
+>   => Indentation t
+>   -> Parser t a
+>   -> Parser t a
 > indent ind (Parser q) = Parser $ \ref stream ->
 >   let (c, r) = q ref stream in
 >   case c of
@@ -574,7 +630,7 @@ Errors
 The basic combinators can do an okay job of reporting useful errors as-is. But the Parsec authors go one step further to provide an explicit error message combinator, which gives much finer control over semantic errors. The `<?>` function tries to run a parser, and if it fails, gives a higher level error message.
 
 > -- | Run a parser, and on failure, attach an error message.
-> (<?>) :: (Stream s) => Parser s a -> String -> Parser s a
+> (<?>) :: (Token t) => Parser t a -> String -> Parser t a
 > (Parser q) <?> msg = Parser $ \stack stream ->
 >   let (c, result) = q stack stream in
 >     case result of
@@ -587,7 +643,7 @@ The basic combinators can do an okay job of reporting useful errors as-is. But t
 
 For example, we can use `<?>` with `mapM` and `char` to parse specific strings with a better error message.
 
-> string :: (Stream s) => String -> Parser s ()
+> string :: String -> Parser Char ()
 > string str = mapM_ char str <?> str
 
 So far we've glossed over the details of the `ParseError` type, but now it's time to unpack that. The purpose of an error type for a parser is to give human users relevant information about what went wrong. At the same time, we don't want to expect readers of the errors to know how this parsing library works, since in practice they'll be using some other tool and shouldn't need to care what parsing library it used.
@@ -626,32 +682,32 @@ We can make `Error a e` a monoid, where `OneOf []` is the identity. Multiplicati
 Now the basic errors are just a roster of the bad things that can happen when we pop a `Char` from the stream, or look at the reference position (to be discussed later).
 
 > -- | Low-level reasons why a parse can fail.
-> data BasicError
->   = UnexpectedEOF (Either String (Maybe Char))
->   | UnexpectedChar Char (Maybe Char) Pos
->   | UnexpectedSatisfy Char String Pos
->   | UnexpectedIndentation String (Pos, Pos)
->   | UnexpectedSuccess (Maybe Pos)
->   | UnexpectedDecline (Maybe Pos)
->   | ExpectedBOF Pos
->   | IncompleteParse (Maybe Pos)
->   | Failure String (Maybe Pos)
+> data BasicError t
+>   = UnexpectedEOF (Either String (Maybe t))
+>   | UnexpectedToken t (Maybe t) (Pos t)
+>   | UnexpectedSatisfy t String (Pos t)
+>   | UnexpectedIndentation String (Pos t, Pos t)
+>   | UnexpectedSuccess (Maybe (Pos t))
+>   | UnexpectedDecline (Maybe (Pos t))
+>   | ExpectedBOF (Pos t)
+>   | IncompleteParse (Maybe (Pos t))
+>   | Failure String (Maybe (Pos t))
 >   deriving (Eq, Show)
 
 Our annotations come in a couple of flavors.
 
 > -- | Represents a reason why a parse failed, above
 > --   the level of unexpected character or EOF.
-> data Annotation
->   = Note String (Maybe Pos)   -- ^ Comes from @\<?>@
->   | Lookahead (Maybe Pos)     -- ^ Comes from @wouldFail@
->   | DeclineReason (Maybe Pos) -- ^ Comes from @consume@
+> data Annotation t
+>   = Note String (Maybe (Pos t))   -- ^ Comes from @\<?>@
+>   | Lookahead (Maybe (Pos t))     -- ^ Comes from @wouldFail@
+>   | DeclineReason (Maybe (Pos t)) -- ^ Comes from @consume@
 >   deriving (Eq, Show)
 
 So the `ParseError` type looks like this:
 
 > -- | Synonym for the type of trees of parse errors.
-> type ParseError = Error Annotation BasicError
+> type ParseError t = Error (Annotation t) (BasicError t)
 
 `ParseError` values are essentially trees, and this structure means they can be very precise.
 
@@ -667,46 +723,46 @@ This approach uses a tree of all possible orderings of a list of parsers, which 
 > -- | Opaque type representing a parser for permutation
 > --   phrases. To construct values of this type, see
 > --   @\<$$>@, @\<$?>@, @\<&&>@, and @\<&?>@.
-> data Perms s a
->   = Perms (Maybe a) [Branch s a]
+> data Perms t a
+>   = Perms (Maybe a) [Branch t a]
 > 
-> data Branch s a
->   = forall x. Branch (Perms s (x -> a)) (Parser s x)
+> data Branch t a
+>   = forall x. Branch (Perms t (x -> a)) (Parser t x)
 > 
-> perm :: a -> Perms s a
+> perm :: a -> Perms t a
 > perm a = Perms (Just a) []
 
 I'm 95% sure these `Functor` instances are legitimate, although the Parsec authors use ad-hoc functions instead of `fmap`. I'm not sure why.
 
-> instance Functor (Perms s) where
+> instance Functor (Perms t) where
 >   fmap f (Perms x xs) =
 >     Perms (fmap f x) (map (fmap f) xs)
 > 
-> instance Functor (Branch s) where
+> instance Functor (Branch t) where
 >   fmap f (Branch t p) = Branch (fmap (f .) t) p
 
 We have a mini-DSL for building permutation parsers consisting of four combinators: `<$$>`, `<$?>`, `<&&>`, and `<&?>`.  To use these we need a single function accepting one or more arguments that we want to parse in any order. Then we list out the parsers for each argument, prefixing with `<&&>` (if the argument is required) or `<&?>` (if the argument is optional). The first argument is prefixed with `<$$>` or `<$?>`. (This sort of mimics the `Applicative` style.)
 
 > -- | Append a required term to a permutation phrase.
-> (<&&>) :: Perms s (a -> b) -> Parser s a -> Perms s b
+> (<&&>) :: Perms t (a -> b) -> Parser t a -> Perms t b
 > t@(Perms u bs) <&&> p =
 >   Perms Nothing $ (Branch t p) : map insert bs
 >     where
 >       insert (Branch w q) = Branch ((fmap flip w) <&&> p) q
 > 
 > -- | Start a permutation phrase with a required term.
-> (<$$>) :: (a -> b) -> Parser s a -> Perms s b
+> (<$$>) :: (a -> b) -> Parser t a -> Perms t b
 > f <$$> p = perm f <&&> p
 > 
 > -- | Append an optional term to a permutation phrase.
-> (<&?>) :: Perms s (a -> b) -> (a, Parser s a) -> Perms s b
+> (<&?>) :: Perms t (a -> b) -> (a, Parser t a) -> Perms t b
 > t@(Perms u bs) <&?> (x,p) =
 >   Perms (fmap ($ x) u) $ (Branch t p) : map insert bs
 >     where
 >       insert (Branch w q) = Branch ((fmap flip w) <&?> (x,p)) q
 > 
 > -- | Start a permutation phrase with an optional term.
-> (<$?>) :: (a -> b) -> (a, Parser s a) -> Perms s b
+> (<$?>) :: (a -> b) -> (a, Parser t a) -> Perms t b
 > f <$?> (x,p) = perm f <&?> (x,p)
 > 
 > infixl 1 <&&>, <&?>
@@ -715,7 +771,7 @@ We have a mini-DSL for building permutation parsers consisting of four combinato
 Once we've constructed a permutation phrase, we can convert it to a normal parser with `permute`.
 
 > -- | Convert a permutation phrase to a @Parser@.
-> permute :: (Stream s) => Perms s a -> Parser s a
+> permute :: (Token t) => Perms t a -> Parser t a
 > permute (Perms u bs) = choice $ map branch bs ++ nil
 >   where
 >     nil = case u of
@@ -731,12 +787,12 @@ Another common situation is that we want terms to be permutable but also separat
 
 > -- | Convert a permutation phrase to a @Parser@, with
 > --   terms separated by @psep@.
-> permuteSepBy :: (Stream s) => Parser s () -> Perms s a -> Parser s a
+> permuteSepBy :: (Token t) => Parser t () -> Perms t a -> Parser t a
 > permuteSepBy = psep (pure ())
 >   where
 >     psep
->       :: (Stream s)
->       => Parser s () -> Parser s () -> Perms s a -> Parser s a
+>       :: (Token t)
+>       => Parser t () -> Parser t () -> Perms t a -> Parser t a
 >     psep init sep (Perms u bs)
 >       = choice $ map branch bs ++ nil
 >       where
@@ -756,13 +812,13 @@ Likewise there are cases where the indentation of items 2 through n in the permu
 > --   all terms indented with respect to the start
 > --   position of the first.
 > permuteIndent
->   :: (Stream s)
->   => Indentation -> Perms s a -> Parser s a
+>   :: forall t a. (Token t)
+>   => Indentation t -> Perms t a -> Parser t a
 > permuteIndent ind = pind
 >   where
 >     pind
->       :: (Stream s)
->       => Perms s a -> Parser s a
+>       :: forall b. (Token t)
+>       => Perms t b -> Parser t b
 >     pind (Perms u bs)
 >       = choice $ map branch bs ++ nil
 >       where
@@ -775,7 +831,9 @@ Likewise there are cases where the indentation of items 2 through n in the permu
 >           f <- localRef u $ indent ind $ pind2 w
 >           return (f x)
 > 
->     pind2 :: (Stream s) => Perms s a -> Parser s a
+>     pind2
+>       :: forall b. (Token t)
+>       => Perms t b -> Parser t b
 >     pind2 (Perms u bs)
 >       = choice $ map branch bs ++ nil
 >       where
@@ -794,17 +852,17 @@ Finally, combining indentation with an item separator.
 > --   terms separated and indented with respect to the
 > --   start position of the first.
 > permuteIndentSepBy
->   :: (Stream s)
->   => Indentation -- ^ Indentation of items 2 through n
->                  --   with respect to the start position of item 1
->   -> Parser s () -- ^ Separator
->   -> Perms s a
->   -> Parser s a
+>   :: forall t a. (Token t)
+>   => Indentation t -- ^ Indentation of items 2 through n
+>                    --   with respect to the start position of item 1
+>   -> Parser t ()   -- ^ Separator
+>   -> Perms t a
+>   -> Parser t a
 > permuteIndentSepBy ind = pindsep (pure ())
 >   where
 >     pindsep
->       :: (Stream s)
->       => Parser s () -> Parser s () -> Perms s a -> Parser s a
+>       :: forall b. (Token t)
+>       => Parser t () -> Parser t () -> Perms t b -> Parser t b
 >     pindsep init sep (Perms u bs)
 >       = choice $ map branch bs ++ nil
 >       where
@@ -819,8 +877,8 @@ Finally, combining indentation with an item separator.
 >           return (f x)
 > 
 >     pindsep2
->       :: (Stream s)
->       => Parser s () -> Perms s a -> Parser s a
+>       :: forall b. (Token t)
+>       => Parser t () -> Perms t b -> Parser t b
 >     pindsep2 sep (Perms u bs)
 >       = choice $ map branch bs ++ nil
 >       where
@@ -847,9 +905,8 @@ The error information reported by our parsers is pretty good -- we get a nice tr
 > class Pretty t where
 >   pretty :: t -> String
 > 
-> instance Pretty Pos where
->   pretty (Pos ln col) = concat
->     [ "l", show ln, "c", show col ]
+> instance (Token t) => Pretty (Pos t) where
+>   pretty = formatPos
 
 The `Pretty` instance for `Char` makes control characters visible; otherwise they'd be printed verbatim in the error text.
 
@@ -863,7 +920,7 @@ The `Pretty` instance for `Char` makes control characters visible; otherwise the
 
 We can then pretty print `BasicError`s, recalling what they mean from how they are used.
 
-> instance Pretty BasicError where
+> instance (Token t, Pretty t) => Pretty (BasicError t) where
 >   pretty e = case e of
 >     UnexpectedEOF z -> case z of
 >       Left str -> unwords
@@ -874,7 +931,7 @@ We can then pretty print `BasicError`s, recalling what they mean from how they a
 >         Just w -> unwords
 >           [ "expected", pretty w, "but reached end of stream" ]
 > 
->     UnexpectedChar c z pos -> case z of
+>     UnexpectedToken c z pos -> case z of
 >       Nothing -> unwords
 >         [ "expected EOF but read", pretty c, "at", pretty pos ]
 >       Just d -> unwords
@@ -910,7 +967,7 @@ We can then pretty print `BasicError`s, recalling what they mean from how they a
 
 `Annotation`s are similar.
 
-> instance Pretty Annotation where
+> instance (Token t) => Pretty (Annotation t) where
 >   pretty a = case a of
 >     Note msg pos -> case pos of
 >       Just z -> unwords [ msg, "at", pretty z ]
@@ -972,7 +1029,7 @@ Now we can pretty print `Error a e`s by converting them to `Tree String`s first.
 >           in T msg [toTree err]
 >         Simply e -> T (pretty e) []
 > 
-> displayParseError :: ParseError -> String
+> displayParseError :: (Token t, Pretty t) => ParseError t -> String
 > displayParseError = pretty
 
 
@@ -1013,7 +1070,9 @@ Now `wrtRef` takes an endpoint, a dimenstion, and a relation and constructs an i
 
 > -- | Constructs a simple indentation strategy with respect to
 > --   the reference position.
-> wrtRef :: Endpoint -> Dimension -> Relation -> Indentation
+> wrtRef
+>   :: (Token t, Pretty t)
+>   => Endpoint -> Dimension -> Relation -> Indentation t
 > wrtRef pt dim rel = Indentation
 >   { relation = \ref range ->
 >       getRel rel (getDim dim ref) (getDim dim $ getPt pt range)
@@ -1033,7 +1092,9 @@ Now `wrtRef` takes an endpoint, a dimenstion, and a relation and constructs an i
 
 > -- | Constructs a simple indentation strategy with respect to the
 > --   given position.
-> wrtPos :: Pos -> Endpoint -> Dimension -> Relation -> Indentation
+> wrtPos
+>   :: (Token t, Pretty t)
+>   => Pos t -> Endpoint -> Dimension -> Relation -> Indentation t
 > wrtPos pos pt dim rel = Indentation
 >   { relation = \_ range ->
 >       getRel rel (getDim dim pos) (getDim dim $ getPt pt range)
@@ -1051,10 +1112,10 @@ Now `wrtRef` takes an endpoint, a dimenstion, and a relation and constructs an i
 
 These helper functions are only needed by `wrtRef` and `wrtPos`, and aren't part of the library proper.
 
-> getPt :: Endpoint -> (Pos, Pos) -> Pos
+> getPt :: Endpoint -> (Pos t, Pos t) -> Pos t
 > getPt pt = case pt of Start -> fst; End -> snd
 > 
-> getDim :: Dimension -> Pos -> Integer
+> getDim :: Dimension -> Pos t -> Integer
 > getDim dim = case dim of Column -> column; Line -> line
 > 
 > getRel :: Relation -> Integer -> Integer -> Bool

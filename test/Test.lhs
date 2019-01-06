@@ -12,7 +12,6 @@ First the usual compiler noises.
 > 
 > import Text.ParserCombinators.Munch
 > import Control.Applicative
-> import Data.String
 > import System.Exit (exitFailure)
 
 
@@ -20,25 +19,25 @@ First the usual compiler noises.
 Test Helpers
 ------------
 
-Although the Munch library can operate on any type implementing the `Stream` class, these examples will only test the built-in `CharStream` type.
+Although the Munch library can operate on any type implementing the `Token` class, these examples will only test the built-in `Char` instance.
 
-> runCharStreamParse
->   :: Parser CharStream a
+> runCharParse
+>   :: Parser Char a
 >   -> String
->   -> Either ParseError a
-> runCharStreamParse q str =
->   runParser q (fromString str)
+>   -> Either (ParseError Char) a
+> runCharParse q str =
+>   runParser q (toStream str)
 
 `parse_results` is a helper function taking a parser and a list of good inputs and outputs; for each example it checks the actual output against the expectation. The entire suite fails if any example fails.
 
 > parse_results
->   :: (Eq a, Show a) => Parser CharStream a -> [(String, a)] -> IO ()
+>   :: (Eq a, Show a) => Parser Char a -> [(String, a)] -> IO ()
 > parse_results = mapM_ . parse_result_is
 >   where
 >     parse_result_is
->       :: (Eq a, Show a) => Parser CharStream a -> (String, a) -> IO ()
+>       :: (Eq a, Show a) => Parser Char a -> (String, a) -> IO ()
 >     parse_result_is q (str, x) =
->       case runCharStreamParse q str of
+>       case runCharParse q str of
 >         Left err -> do
 >           putStrLn $ '\n' : displayParseError err
 >           exitFailure
@@ -56,14 +55,14 @@ Similarly, `parse_failures` takes a parser and a list of bad inputs and outputs,
 
 > parse_failures
 >   :: (Eq a, Show a)
->   => Parser CharStream a -> [(String, ParseError)] -> IO ()
+>   => Parser Char a -> [(String, ParseError Char)] -> IO ()
 > parse_failures = mapM_ . parse_failure_is
 >   where
 >     parse_failure_is
 >       :: (Eq a, Show a)
->       => Parser CharStream a -> (String, ParseError) -> IO ()
+>       => Parser Char a -> (String, ParseError Char) -> IO ()
 >     parse_failure_is q (str, fail) =
->       case runCharStreamParse q str of
+>       case runCharParse q str of
 >         Right a -> do
 >           putStrLn $ '\n' : "Expected failure:"
 >           putStrLn $ show a
@@ -83,9 +82,9 @@ Now `test_parser` wraps all this up, running good and bad tests for a given pars
 > test_parser
 >   :: (Eq a, Show a)
 >   => String -- ^ Test label
->   -> Parser CharStream a
+>   -> Parser Char a
 >   -> [(String, a)] -- ^ Good cases
->   -> [(String, ParseError)] -- ^ Bad cases
+>   -> [(String, ParseError Char)] -- ^ Bad cases
 >   -> IO ()
 > test_parser name p oks fails = do
 >   putStrLn $ "==> " ++ name
@@ -108,20 +107,20 @@ Let's start simple with `char`. There's only one way this parser can succeed, an
 >   ]
 > fail_00 =
 >   [ ("ab", Simply $ IncompleteParse $ Just (Pos 1 2))
->   , ("b", Simply $ UnexpectedChar 'b' (Just 'a') (Pos 1 1))
+>   , ("b", Simply $ UnexpectedToken 'b' (Just 'a') (Pos 1 1))
 >   , ("", Simply $ UnexpectedEOF $ Right (Just 'a'))
 >   ]
 
-Next is `anyChar`.
+Next is `anyToken`.
 
-> p_01 = anyChar
+> p_01 = anyToken
 > 
 > ok_01 =
 >   [ ("a", 'a')
 >   , ("\n", '\n')
 >   ]
 > fail_01 =
->   [ ("", Simply $ UnexpectedEOF $ Left "any character")
+>   [ ("", Simply $ UnexpectedEOF $ Left "any token")
 >   , ("ab", Simply $ IncompleteParse $ Just (Pos 1 2))
 >   ]
 
@@ -135,7 +134,7 @@ Now to try `many`. Note the failure case `"a"` here; `many decimalDigit` looks f
 >   , ("", "")
 >   ]
 > fail_02 =
->   [ ("a", Simply $ UnexpectedChar 'a' Nothing (Pos 1 1))
+>   [ ("a", Simply $ UnexpectedToken 'a' Nothing (Pos 1 1))
 >   ]
 
 Here's a test using `<|>` and `<?>`. Note the difference in behavior between this parser and the last that arises because we're using `>>` rather than `<*`.
@@ -150,7 +149,7 @@ Here's a test using `<|>` and `<?>`. Note the difference in behavior between thi
 >   , ("ABC", ())
 >   ]
 > fail_03 =
->   [ ("abcD", Simply $ UnexpectedChar 'D' Nothing (Pos 1 4))
+>   [ ("abcD", Simply $ UnexpectedToken 'D' Nothing (Pos 1 4))
 >   , ( ""
 >     , OneOf
 >         [ Because (Note "little word" Nothing)
@@ -195,7 +194,7 @@ Here's a parser for a simplified telephone number format. These numbers have thr
 >   [ ( "1-13"
 >     , OneOf
 >         [ Simply $ UnexpectedSatisfy '3' "ternary digit" (Pos 1 4)
->         , Simply $ UnexpectedChar '1' (Just '(') (Pos 1 1)
+>         , Simply $ UnexpectedToken '1' (Just '(') (Pos 1 1)
 >         ]
 >     )
 >   ]
@@ -218,15 +217,15 @@ Here's a parser testing positive and negative lookahead.
 >   [ ( "c"
 >     , Because (Lookahead (Just (Pos {line = 1, column = 1})))
 >         (OneOf
->           [ Simply (UnexpectedChar 'c' (Just 'a') (Pos 1 1))
->           , Simply (UnexpectedChar 'c' (Just 'b') (Pos 1 1))
+>           [ Simply (UnexpectedToken 'c' (Just 'a') (Pos 1 1))
+>           , Simply (UnexpectedToken 'c' (Just 'b') (Pos 1 1))
 >           ])
 >     )
 >   , ( "%"
 >     , Because (Lookahead (Just (Pos {line = 1, column = 1})))
 >         (OneOf
->           [ Simply (UnexpectedChar '%' (Just 'a') (Pos 1 1))
->           , Simply (UnexpectedChar '%' (Just 'b') (Pos 1 1))
+>           [ Simply (UnexpectedToken '%' (Just 'a') (Pos 1 1))
+>           , Simply (UnexpectedToken '%' (Just 'b') (Pos 1 1))
 >           ])
 >     )
 >   , ( "aabba%"
