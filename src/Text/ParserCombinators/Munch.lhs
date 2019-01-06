@@ -40,8 +40,8 @@ Code that is part of the library appears on a gray background, like this block o
 >   , Stream(..), Pos(..), DidConsume(..), CharStream()
 >     -- * Basic Parsers
 >   , char, bof, eof, satisfies, wouldFail, wouldSucceed, anyChar
->   , decimalDigit, lowerLatin, upperLatin, spaces, newline
->   , choice, manySepBy, someSepBy
+>   , decimalDigit, hexDigit, lowerLatin, upperLatin, spaces, newline
+>   , choice, manySepBy, someSepBy, string
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -60,6 +60,7 @@ Code that is part of the library appears on a gray background, like this block o
 > import Data.String
 > import Control.Applicative
 > import Control.Monad
+> import qualified Control.Monad.Fail as F
 
 
 
@@ -286,6 +287,10 @@ The `>>` operator in the `Monad` instance represents PEG style sequencing.
 > -- | Default instance in terms of @Alternative@.
 > instance MonadPlus (Parser s)
 
+> instance (Stream s) => F.MonadFail (Parser s) where
+>   fail msg = Parser $ \_ stream ->
+>     (Declined, Left $ Simply $ Failure msg (pointer stream))
+
 We can also give `Parser s a` a `Semigroup` and `Monoid` instance.
 
 > -- | The @\<>@ implementation allows us to combine the results of
@@ -418,6 +423,12 @@ We'll also define some commonly used parsers.
 > decimalDigit = satisfies
 >   (\c -> elem c "0123456789")
 >   "decimal digit (0-9)"
+> 
+> -- | Expects a hexadecimal digit (0-9, a-f, A-F)
+> hexDigit :: (Stream s) => Parser s Char
+> hexDigit = satisfies
+>   (\c -> elem c "0123456789abcdefABCDEF")
+>   "hexadecimal digit (0-9, a-f, A-F)"
 > 
 > -- | Expects a character in the range @['a'..'z']@.
 > lowerLatin :: (Stream s) => Parser s Char
@@ -558,22 +569,24 @@ Constructing `Indentation` values is not difficult, but a little tedious; later 
 Errors
 ------
 
-The basic combinators can do an okay job of reporting useful errors as-is. But the Parsec authors go one step further to provide an explicit error message combinator, which gives much finer control over semantic errors. The `<?>` function tries to run a parser, and _if it fails without consuming input_, gives a higher level error message.
+The basic combinators can do an okay job of reporting useful errors as-is. But the Parsec authors go one step further to provide an explicit error message combinator, which gives much finer control over semantic errors. The `<?>` function tries to run a parser, and if it fails, gives a higher level error message.
 
 > -- | Run a parser, and on failure, attach an error message.
 > (<?>) :: (Stream s) => Parser s a -> String -> Parser s a
 > (Parser q) <?> msg = Parser $ \stack stream ->
 >   let (c, result) = q stack stream in
->     case c of
->       Declined -> case result of
->         Right value ->
->           (Declined, Right value)
->         Left err ->
->           (Declined, Left $ Because (Note msg (pointer stream)) err)
-> 
->       c -> (c, result)
+>     case result of
+>       Right value ->
+>         (Declined, Right value)
+>       Left err ->
+>         (Declined, Left $ Because (Note msg (pointer stream)) err)
 > 
 > infix 0 <?>
+
+For example, we can use `<?>` with `mapM` and `char` to parse specific strings with a better error message.
+
+> string :: (Stream s) => String -> Parser s ()
+> string str = mapM_ char str <?> str
 
 So far we've glossed over the details of the `ParseError` type, but now it's time to unpack that. The purpose of an error type for a parser is to give human users relevant information about what went wrong. At the same time, we don't want to expect readers of the errors to know how this parsing library works, since in practice they'll be using some other tool and shouldn't need to care what parsing library it used.
 
@@ -620,6 +633,7 @@ Now the basic errors are just a roster of the bad things that can happen when we
 >   | UnexpectedDecline (Maybe Pos)
 >   | ExpectedBOF Pos
 >   | IncompleteParse (Maybe Pos)
+>   | Failure String (Maybe Pos)
 >   deriving (Eq, Show)
 
 Our annotations come in a couple of flavors.
@@ -885,6 +899,12 @@ We can then pretty print `BasicError`s, recalling what they mean from how they a
 >         [ "expected to consume the entire stream"
 >         , "but characters remain at position", pretty u
 >         ]
+> 
+>     Failure msg pos ->
+>       let loc = case pos of
+>             Nothing -> "end of stream:"
+>             Just u -> "at " ++ pretty u ++ ":"
+>       in unwords [ loc, msg ]
 
 `Annotation`s are similar.
 
