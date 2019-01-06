@@ -24,10 +24,7 @@ Code that is part of the library appears on a gray background, like this block o
 > {-#
 >   LANGUAGE
 >     ExplicitForAll,
->     FlexibleContexts,
->     FlexibleInstances,
 >     ScopedTypeVariables,
->     UndecidableInstances,
 >     ExistentialQuantification
 > #-}
 > 

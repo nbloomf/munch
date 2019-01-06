@@ -101,61 +101,58 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb2"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ot">{-#</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="ot">  LANGUAGE</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="ot">    ExplicitForAll,</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="ot">    FlexibleContexts,</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="ot">    FlexibleInstances,</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="ot">    ScopedTypeVariables,</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="ot">    UndecidableInstances,</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="ot">    ExistentialQuantification</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="ot">#-}</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">{-|</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">Module      : Text.ParserCombinators.Munch</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">Description : Simple parser combinator library</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">Copyright   : (c) Automattic, Inc. 2018</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">License     : GPL-3</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">Maintainer  : Nathan Bloomfield, nathan.bloomfield@a8c.com</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">Stability   : experimental</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">Portability : POSIX</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="ot">    ScopedTypeVariables,</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="ot">    ExistentialQuantification</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="ot">#-}</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">{-|</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">Module      : Text.ParserCombinators.Munch</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">Description : Simple parser combinator library</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">Copyright   : (c) Automattic, Inc. 2018</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">License     : GPL-3</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">Maintainer  : Nathan Bloomfield, nathan.bloomfield@a8c.com</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">Stability   : experimental</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">Portability : POSIX</span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">Parser combinator library with support for indentation sensitivity.</span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">-}</span></a>
 <a class="sourceLine" id="cb2-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">Parser combinator library with support for indentation sensitivity.</span></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">-}</span></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="kw">module</span> <span class="dt">Text.ParserCombinators.Munch</span> (</a>
-<a class="sourceLine" id="cb2-24" data-line-number="24">    <span class="co">-- * Usage</span></a>
-<a class="sourceLine" id="cb2-25" data-line-number="25">    <span class="co">-- $overview</span></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26">    <span class="dt">Parser</span>(), runParser, debugParser, parseIO</a>
-<a class="sourceLine" id="cb2-27" data-line-number="27">  , <span class="dt">Stream</span>(), toStream, <span class="dt">Token</span>(<span class="fu">..</span>), <span class="dt">Pos</span>(<span class="fu">..</span>), <span class="dt">DidConsume</span>(<span class="fu">..</span>)</a>
-<a class="sourceLine" id="cb2-28" data-line-number="28">    <span class="co">-- * Basic Parsers</span></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29">  , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed</a>
-<a class="sourceLine" id="cb2-30" data-line-number="30">  , choice, manySepBy, someSepBy</a>
-<a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Char@</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">  , char, newline, spaces, decimalDigit, hexDigit</a>
-<a class="sourceLine" id="cb2-33" data-line-number="33">  , lowerLatin, upperLatin, string</a>
-<a class="sourceLine" id="cb2-34" data-line-number="34">    <span class="co">-- ** @Word8@</span></a>
-<a class="sourceLine" id="cb2-35" data-line-number="35">  , byte, unicodeChar</a>
-<a class="sourceLine" id="cb2-36" data-line-number="36">    <span class="co">-- * Errors</span></a>
-<a class="sourceLine" id="cb2-37" data-line-number="37">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
-<a class="sourceLine" id="cb2-38" data-line-number="38">  , displayParseError</a>
-<a class="sourceLine" id="cb2-39" data-line-number="39">    <span class="co">-- * Indentation</span></a>
-<a class="sourceLine" id="cb2-40" data-line-number="40">  , readRef, adjustRef, localRef, consume, ignore</a>
-<a class="sourceLine" id="cb2-41" data-line-number="41">  , <span class="dt">Indentation</span>(<span class="fu">..</span>), indent</a>
-<a class="sourceLine" id="cb2-42" data-line-number="42">    <span class="co">-- ** Simple Indentation</span></a>
-<a class="sourceLine" id="cb2-43" data-line-number="43">  , wrtRef, wrtPos, <span class="dt">Endpoint</span>(<span class="fu">..</span>), <span class="dt">Relation</span>(<span class="fu">..</span>), <span class="dt">Dimension</span>(<span class="fu">..</span>)</a>
-<a class="sourceLine" id="cb2-44" data-line-number="44">    <span class="co">-- * Permutations</span></a>
-<a class="sourceLine" id="cb2-45" data-line-number="45">  , permute, permuteSepBy, permuteIndent, permuteIndentSepBy</a>
-<a class="sourceLine" id="cb2-46" data-line-number="46">  , (<span class="fu">&lt;$$&gt;</span>), (<span class="fu">&lt;&amp;&amp;&gt;</span>), (<span class="fu">&lt;$?&gt;</span>), (<span class="fu">&lt;&amp;?&gt;</span>), <span class="dt">Perms</span>()</a>
-<a class="sourceLine" id="cb2-47" data-line-number="47">) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb2-48" data-line-number="48"></a>
-<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString</span> <span class="kw">as</span> <span class="dt">BS</span></a>
-<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">BSC</span></a>
-<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
-<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
-<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="dt">Data.String</span></a>
-<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
-<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
-<a class="sourceLine" id="cb2-56" data-line-number="56"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
-<a class="sourceLine" id="cb2-57" data-line-number="57"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
-<a class="sourceLine" id="cb2-58" data-line-number="58"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="kw">module</span> <span class="dt">Text.ParserCombinators.Munch</span> (</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">    <span class="co">-- * Usage</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">    <span class="co">-- $overview</span></a>
+<a class="sourceLine" id="cb2-23" data-line-number="23">    <span class="dt">Parser</span>(), runParser, debugParser, parseIO</a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">  , <span class="dt">Stream</span>(), toStream, <span class="dt">Token</span>(<span class="fu">..</span>), <span class="dt">Pos</span>(<span class="fu">..</span>), <span class="dt">DidConsume</span>(<span class="fu">..</span>)</a>
+<a class="sourceLine" id="cb2-25" data-line-number="25">    <span class="co">-- * Basic Parsers</span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26">  , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed</a>
+<a class="sourceLine" id="cb2-27" data-line-number="27">  , choice, manySepBy, someSepBy</a>
+<a class="sourceLine" id="cb2-28" data-line-number="28">    <span class="co">-- ** @Char@</span></a>
+<a class="sourceLine" id="cb2-29" data-line-number="29">  , char, newline, spaces, decimalDigit, hexDigit</a>
+<a class="sourceLine" id="cb2-30" data-line-number="30">  , lowerLatin, upperLatin, string</a>
+<a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Word8@</span></a>
+<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, unicodeChar</a>
+<a class="sourceLine" id="cb2-33" data-line-number="33">    <span class="co">-- * Errors</span></a>
+<a class="sourceLine" id="cb2-34" data-line-number="34">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
+<a class="sourceLine" id="cb2-35" data-line-number="35">  , displayParseError</a>
+<a class="sourceLine" id="cb2-36" data-line-number="36">    <span class="co">-- * Indentation</span></a>
+<a class="sourceLine" id="cb2-37" data-line-number="37">  , readRef, adjustRef, localRef, consume, ignore</a>
+<a class="sourceLine" id="cb2-38" data-line-number="38">  , <span class="dt">Indentation</span>(<span class="fu">..</span>), indent</a>
+<a class="sourceLine" id="cb2-39" data-line-number="39">    <span class="co">-- ** Simple Indentation</span></a>
+<a class="sourceLine" id="cb2-40" data-line-number="40">  , wrtRef, wrtPos, <span class="dt">Endpoint</span>(<span class="fu">..</span>), <span class="dt">Relation</span>(<span class="fu">..</span>), <span class="dt">Dimension</span>(<span class="fu">..</span>)</a>
+<a class="sourceLine" id="cb2-41" data-line-number="41">    <span class="co">-- * Permutations</span></a>
+<a class="sourceLine" id="cb2-42" data-line-number="42">  , permute, permuteSepBy, permuteIndent, permuteIndentSepBy</a>
+<a class="sourceLine" id="cb2-43" data-line-number="43">  , (<span class="fu">&lt;$$&gt;</span>), (<span class="fu">&lt;&amp;&amp;&gt;</span>), (<span class="fu">&lt;$?&gt;</span>), (<span class="fu">&lt;&amp;?&gt;</span>), <span class="dt">Perms</span>()</a>
+<a class="sourceLine" id="cb2-44" data-line-number="44">) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb2-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb2-46" data-line-number="46"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString</span> <span class="kw">as</span> <span class="dt">BS</span></a>
+<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">BSC</span></a>
+<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
+<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
+<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="dt">Data.String</span></a>
+<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
+<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
+<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
+<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
+<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
 <h2 id="contents">Contents</h2>
 <ul>
 <li>The Library
