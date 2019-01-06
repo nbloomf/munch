@@ -287,6 +287,8 @@ The `>>` operator in the `Monad` instance represents PEG style sequencing.
 > -- | Default instance in terms of @Alternative@.
 > instance MonadPlus (Parser s)
 
+We can also give a `MonadFail` instance. This typeclass isn't as "natural" as `Functor` and `Monad`, but `fail` is a really useful utility -- it lets us stop the world and fail the parse for any reason.
+
 > instance (Stream s) => F.MonadFail (Parser s) where
 >   fail msg = Parser $ \_ stream ->
 >     (Declined, Left $ Simply $ Failure msg (pointer stream))
