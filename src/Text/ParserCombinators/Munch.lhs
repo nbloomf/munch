@@ -52,7 +52,8 @@ Code that is part of the library appears on a gray background, like this block o
 >   , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed
 >   , choice, manySepBy, someSepBy, string
 >     -- ** @Char@
->   , char, newline, spaces, decimalDigit, hexDigit, lowerLatin, upperLatin
+>   , char, newline, spaces, decimalDigit, hexDigit
+>   , lowerLatin, upperLatin
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -131,7 +132,8 @@ The `DidConsume` type is defined like so.
 
 > -- | Represents whether a parser consumed part of the input stream.
 > data DidConsume t
->   = Declined                 -- ^ The parse did not consume any characters.
+>   = Declined                 -- ^ The parse did not consume any
+>                              --   characters.
 >   | Consumed (Pos t) (Pos t) -- ^ The parse consumed input characters
 >                              --   between two positions (inclusive).
 >   deriving Show
@@ -180,7 +182,9 @@ Parsec makes one more basic adjustment to this type: rather than parsing `String
 The `t` type represents our tokens. So our parsers will have a type like this:
 
 ```haskell
-parser :: (Token t) => Stream t -> (DidConsume, Either ParseError (a, Stream t))
+parser
+  :: (Token t)
+  => Stream t -> (DidConsume, Either ParseError (a, Stream t))
 ```
 
 But what exactly should be special about tokens? The most important thing we will do with streams is read the head token (if it exists) and return the remaining stream. This will require _updating_ the head position, typically taking into account which token was taken. We also need a canonical choice for the _initial_ position for a given token type.
