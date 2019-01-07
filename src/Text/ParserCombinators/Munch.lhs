@@ -651,8 +651,9 @@ The basic combinators can do an okay job of reporting useful errors as-is. But t
 
 For example, we can use `<?>` with `mapM` and `char` to parse specific strings with a better error message.
 
-> string :: String -> Parser Char ()
-> string str = mapM_ char str <?> str
+> string :: String -> Parser Char String
+> string str =
+>   mapM char str <?> str
 
 Similarly, we can parse unicode characters as lists of bytes.
 

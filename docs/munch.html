@@ -623,8 +623,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb32-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb32-11" data-line-number="11">infix <span class="dv">0</span> <span class="fu">&lt;?&gt;</span></a></code></pre></div>
 <p>For example, we can use <code>&lt;?&gt;</code> with <code>mapM</code> and <code>char</code> to parse specific strings with a better error message.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="ot">string ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Char</span> ()</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2">string str <span class="fu">=</span> mapM_ char str <span class="fu">&lt;?&gt;</span> str</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="ot">string ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">string str <span class="fu">=</span></a>
+<a class="sourceLine" id="cb33-3" data-line-number="3">  mapM char str <span class="fu">&lt;?&gt;</span> str</a></code></pre></div>
 <p>Similarly, we can parse unicode characters as lists of bytes.</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="ot">unicodeChar ::</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> [<span class="dt">Word8</span>]</a>
 <a class="sourceLine" id="cb34-2" data-line-number="2">unicodeChar c <span class="fu">=</span></a>
