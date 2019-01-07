@@ -52,7 +52,7 @@ Code that is part of the library appears on a gray background, like this block o
 >   , char, anyChar, newline, spaces, decimalDigit, hexDigit
 >   , lowerLatin, upperLatin, string
 >     -- ** @Word8@
->   , byte, anyByte, anyAsciiChar, unicodeChar, unicodeString
+>   , byte, anyByte, anyAsciiChar, bytes, unicodeChar, unicodeString
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -663,10 +663,14 @@ For example, we can use `<?>` with `mapM` and `char` to parse specific strings w
 
 > string :: String -> Parser Char String
 > string str =
->   mapM char str <?> str
+>   mapM char str <?> show str
 
 Similarly, we can parse unicode characters as lists of bytes.
 
+> bytes :: [Word8] -> Parser Word8 [Word8]
+> bytes bs =
+>   mapM byte bs <?> concatMap show bs
+> 
 > unicodeChar :: Char -> Parser Word8 [Word8]
 > unicodeChar c =
 >   mapM token (BS.unpack $ BSC.singleton c) <?> [c]
