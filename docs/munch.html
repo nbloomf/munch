@@ -126,10 +126,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-26" data-line-number="26">  , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed</a>
 <a class="sourceLine" id="cb2-27" data-line-number="27">  , choice, manySepBy, someSepBy</a>
 <a class="sourceLine" id="cb2-28" data-line-number="28">    <span class="co">-- ** @Char@</span></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29">  , char, newline, spaces, decimalDigit, hexDigit</a>
+<a class="sourceLine" id="cb2-29" data-line-number="29">  , char, anyChar, newline, spaces, decimalDigit, hexDigit</a>
 <a class="sourceLine" id="cb2-30" data-line-number="30">  , lowerLatin, upperLatin, string</a>
 <a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Word8@</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, unicodeChar, unicodeString</a>
+<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, anyByte, unicodeChar, unicodeString</a>
 <a class="sourceLine" id="cb2-33" data-line-number="33">    <span class="co">-- * Errors</span></a>
 <a class="sourceLine" id="cb2-34" data-line-number="34">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
 <a class="sourceLine" id="cb2-35" data-line-number="35">  , displayParseError</a>
@@ -470,37 +470,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb24-2" data-line-number="2"><span class="ot">char ::</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
 <a class="sourceLine" id="cb24-3" data-line-number="3">char <span class="fu">=</span> token</a>
 <a class="sourceLine" id="cb24-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="co">-- | Expects a newline character.</span></a>
-<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="ot">newline ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
-<a class="sourceLine" id="cb24-7" data-line-number="7">newline <span class="fu">=</span> char <span class="ch">&#39;\n&#39;</span></a>
-<a class="sourceLine" id="cb24-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co">-- | Expects zero or more space characters.</span></a>
-<a class="sourceLine" id="cb24-10" data-line-number="10"><span class="ot">spaces ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb24-11" data-line-number="11">spaces <span class="fu">=</span> many <span class="fu">$</span> char <span class="ch">&#39; &#39;</span></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="co">-- | Expects a character in the range @[&#39;0&#39;..&#39;9&#39;]@.</span></a>
-<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="ot">decimalDigit ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
-<a class="sourceLine" id="cb24-15" data-line-number="15">decimalDigit <span class="fu">=</span> satisfies</a>
-<a class="sourceLine" id="cb24-16" data-line-number="16">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;0123456789&quot;</span>)</a>
-<a class="sourceLine" id="cb24-17" data-line-number="17">  <span class="st">&quot;decimal digit (0-9)&quot;</span></a>
-<a class="sourceLine" id="cb24-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb24-19" data-line-number="19"><span class="co">-- | Expects a hexadecimal digit (0-9, a-f, A-F)</span></a>
-<a class="sourceLine" id="cb24-20" data-line-number="20"><span class="ot">hexDigit ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
-<a class="sourceLine" id="cb24-21" data-line-number="21">hexDigit <span class="fu">=</span> satisfies</a>
-<a class="sourceLine" id="cb24-22" data-line-number="22">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;0123456789abcdefABCDEF&quot;</span>)</a>
-<a class="sourceLine" id="cb24-23" data-line-number="23">  <span class="st">&quot;hexadecimal digit (0-9, a-f, A-F)&quot;</span></a>
-<a class="sourceLine" id="cb24-24" data-line-number="24"></a>
-<a class="sourceLine" id="cb24-25" data-line-number="25"><span class="co">-- | Expects a character in the range @[&#39;a&#39;..&#39;z&#39;]@.</span></a>
-<a class="sourceLine" id="cb24-26" data-line-number="26"><span class="ot">lowerLatin ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
-<a class="sourceLine" id="cb24-27" data-line-number="27">lowerLatin <span class="fu">=</span> satisfies</a>
-<a class="sourceLine" id="cb24-28" data-line-number="28">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>)</a>
-<a class="sourceLine" id="cb24-29" data-line-number="29">  <span class="st">&quot;lower case latin letter (a-z)&quot;</span></a>
-<a class="sourceLine" id="cb24-30" data-line-number="30"></a>
-<a class="sourceLine" id="cb24-31" data-line-number="31"><span class="co">-- | Expects a character in the range @[&#39;A&#39;..&#39;Z&#39;]@.</span></a>
-<a class="sourceLine" id="cb24-32" data-line-number="32"><span class="ot">upperLatin ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
-<a class="sourceLine" id="cb24-33" data-line-number="33">upperLatin <span class="fu">=</span> satisfies</a>
-<a class="sourceLine" id="cb24-34" data-line-number="34">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>)</a>
-<a class="sourceLine" id="cb24-35" data-line-number="35">  <span class="st">&quot;upper case latin letter (A-Z)&quot;</span></a></code></pre></div>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="ot">anyChar ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6">anyChar <span class="fu">=</span> anyToken</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">-- | Expects a newline character.</span></a>
+<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="ot">newline ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb24-10" data-line-number="10">newline <span class="fu">=</span> char <span class="ch">&#39;\n&#39;</span></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="co">-- | Expects zero or more space characters.</span></a>
+<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="ot">spaces ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb24-14" data-line-number="14">spaces <span class="fu">=</span> many <span class="fu">$</span> char <span class="ch">&#39; &#39;</span></a>
+<a class="sourceLine" id="cb24-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb24-16" data-line-number="16"><span class="co">-- | Expects a character in the range @[&#39;0&#39;..&#39;9&#39;]@.</span></a>
+<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="ot">decimalDigit ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb24-18" data-line-number="18">decimalDigit <span class="fu">=</span> satisfies</a>
+<a class="sourceLine" id="cb24-19" data-line-number="19">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;0123456789&quot;</span>)</a>
+<a class="sourceLine" id="cb24-20" data-line-number="20">  <span class="st">&quot;decimal digit (0-9)&quot;</span></a>
+<a class="sourceLine" id="cb24-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb24-22" data-line-number="22"><span class="co">-- | Expects a hexadecimal digit (0-9, a-f, A-F)</span></a>
+<a class="sourceLine" id="cb24-23" data-line-number="23"><span class="ot">hexDigit ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb24-24" data-line-number="24">hexDigit <span class="fu">=</span> satisfies</a>
+<a class="sourceLine" id="cb24-25" data-line-number="25">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;0123456789abcdefABCDEF&quot;</span>)</a>
+<a class="sourceLine" id="cb24-26" data-line-number="26">  <span class="st">&quot;hexadecimal digit (0-9, a-f, A-F)&quot;</span></a>
+<a class="sourceLine" id="cb24-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb24-28" data-line-number="28"><span class="co">-- | Expects a character in the range @[&#39;a&#39;..&#39;z&#39;]@.</span></a>
+<a class="sourceLine" id="cb24-29" data-line-number="29"><span class="ot">lowerLatin ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb24-30" data-line-number="30">lowerLatin <span class="fu">=</span> satisfies</a>
+<a class="sourceLine" id="cb24-31" data-line-number="31">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>)</a>
+<a class="sourceLine" id="cb24-32" data-line-number="32">  <span class="st">&quot;lower case latin letter (a-z)&quot;</span></a>
+<a class="sourceLine" id="cb24-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb24-34" data-line-number="34"><span class="co">-- | Expects a character in the range @[&#39;A&#39;..&#39;Z&#39;]@.</span></a>
+<a class="sourceLine" id="cb24-35" data-line-number="35"><span class="ot">upperLatin ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb24-36" data-line-number="36">upperLatin <span class="fu">=</span> satisfies</a>
+<a class="sourceLine" id="cb24-37" data-line-number="37">  (\c <span class="ot">-&gt;</span> elem c <span class="st">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>)</a>
+<a class="sourceLine" id="cb24-38" data-line-number="38">  <span class="st">&quot;upper case latin letter (A-Z)&quot;</span></a></code></pre></div>
 <p>For fun:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Token</span> <span class="dt">Word8</span> <span class="kw">where</span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2">  updatePos _ (<span class="dt">Pos</span> _ offset) <span class="fu">=</span> <span class="dt">Pos</span> <span class="dv">0</span> (offset <span class="fu">+</span> <span class="dv">1</span>)</a>
@@ -511,7 +514,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb25-7" data-line-number="7">    [ <span class="st">&quot;offset&quot;</span>, <span class="ch">&#39;0&#39;</span> <span class="fu">:</span> <span class="ch">&#39;x&#39;</span> <span class="fu">:</span> showHex offset <span class="st">&quot;&quot;</span> ]</a>
 <a class="sourceLine" id="cb25-8" data-line-number="8"></a>
 <a class="sourceLine" id="cb25-9" data-line-number="9"><span class="ot">byte ::</span> <span class="dt">Word8</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> <span class="dt">Word8</span></a>
-<a class="sourceLine" id="cb25-10" data-line-number="10">byte <span class="fu">=</span> token</a></code></pre></div>
+<a class="sourceLine" id="cb25-10" data-line-number="10">byte <span class="fu">=</span> token</a>
+<a class="sourceLine" id="cb25-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="ot">anyByte ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb25-13" data-line-number="13">anyByte <span class="fu">=</span> anyToken</a></code></pre></div>
 <h2 id="derived-combinators">Derived Combinators</h2>
 <p>Several handy combinators can be defined in terms of the applicative and monad interfaces.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co">-- | Tries the argument parsers one at a time in order,</span></a>

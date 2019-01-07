@@ -49,10 +49,10 @@ Code that is part of the library appears on a gray background, like this block o
 >   , token, bof, eof, satisfies, anyToken, wouldFail, wouldSucceed
 >   , choice, manySepBy, someSepBy
 >     -- ** @Char@
->   , char, newline, spaces, decimalDigit, hexDigit
+>   , char, anyChar, newline, spaces, decimalDigit, hexDigit
 >   , lowerLatin, upperLatin, string
 >     -- ** @Word8@
->   , byte, unicodeChar, unicodeString
+>   , byte, anyByte, unicodeChar, unicodeString
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -466,6 +466,9 @@ Some `Char` specific parsers:
 > char :: Char -> Parser Char Char
 > char = token
 > 
+> anyChar :: Parser Char Char
+> anyChar = anyToken
+> 
 > -- | Expects a newline character.
 > newline :: Parser Char Char
 > newline = char '\n'
@@ -510,6 +513,9 @@ For fun:
 > 
 > byte :: Word8 -> Parser Word8 Word8
 > byte = token
+> 
+> anyByte :: Parser Char Char
+> anyByte = anyToken
 
 
 
