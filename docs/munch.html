@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-29" data-line-number="29">  , char, anyChar, newline, spaces, decimalDigit, hexDigit</a>
 <a class="sourceLine" id="cb2-30" data-line-number="30">  , lowerLatin, upperLatin, string</a>
 <a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Word8@</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, anyByte, unicodeChar, unicodeString</a>
+<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, anyByte, anyAsciiChar, unicodeChar, unicodeString</a>
 <a class="sourceLine" id="cb2-33" data-line-number="33">    <span class="co">-- * Errors</span></a>
 <a class="sourceLine" id="cb2-34" data-line-number="34">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
 <a class="sourceLine" id="cb2-35" data-line-number="35">  , displayParseError</a>
@@ -145,14 +145,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-45" data-line-number="45"></a>
 <a class="sourceLine" id="cb2-46" data-line-number="46"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString</span> <span class="kw">as</span> <span class="dt">BS</span></a>
 <a class="sourceLine" id="cb2-47" data-line-number="47"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">BSC</span></a>
-<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
-<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
-<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="dt">Data.String</span></a>
-<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
-<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
-<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
-<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
-<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
+<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="kw">import</span> <span class="dt">Data.Char</span> (chr)</a>
+<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="kw">import</span> <span class="dt">Data.List</span> (intersperse, unwords)</a>
+<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="kw">import</span> <span class="dt">Data.Semigroup</span></a>
+<a class="sourceLine" id="cb2-51" data-line-number="51"><span class="kw">import</span> <span class="dt">Data.String</span></a>
+<a class="sourceLine" id="cb2-52" data-line-number="52"><span class="kw">import</span> <span class="dt">Data.Word</span> (<span class="dt">Word8</span>)</a>
+<a class="sourceLine" id="cb2-53" data-line-number="53"><span class="kw">import</span> <span class="dt">Control.Applicative</span></a>
+<a class="sourceLine" id="cb2-54" data-line-number="54"><span class="kw">import</span> <span class="dt">Control.Monad</span></a>
+<a class="sourceLine" id="cb2-55" data-line-number="55"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Fail</span> <span class="kw">as</span> <span class="dt">F</span></a>
+<a class="sourceLine" id="cb2-56" data-line-number="56"><span class="kw">import</span> <span class="dt">Numeric</span> (showHex)</a></code></pre></div>
 <h2 id="contents">Contents</h2>
 <ul>
 <li>The Library
@@ -517,7 +518,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb25-10" data-line-number="10">byte <span class="fu">=</span> token</a>
 <a class="sourceLine" id="cb25-11" data-line-number="11"></a>
 <a class="sourceLine" id="cb25-12" data-line-number="12"><span class="ot">anyByte ::</span> <span class="dt">Parser</span> <span class="dt">Word8</span> <span class="dt">Word8</span></a>
-<a class="sourceLine" id="cb25-13" data-line-number="13">anyByte <span class="fu">=</span> anyToken</a></code></pre></div>
+<a class="sourceLine" id="cb25-13" data-line-number="13">anyByte <span class="fu">=</span> anyToken</a>
+<a class="sourceLine" id="cb25-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb25-15" data-line-number="15"><span class="ot">anyAsciiChar ::</span> <span class="dt">Parser</span> <span class="dt">Word8</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb25-16" data-line-number="16">anyAsciiChar <span class="fu">=</span> (chr <span class="fu">.</span> fromIntegral) <span class="fu">&lt;$&gt;</span> anyByte</a></code></pre></div>
 <h2 id="derived-combinators">Derived Combinators</h2>
 <p>Several handy combinators can be defined in terms of the applicative and monad interfaces.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co">-- | Tries the argument parsers one at a time in order,</span></a>

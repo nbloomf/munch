@@ -52,7 +52,7 @@ Code that is part of the library appears on a gray background, like this block o
 >   , char, anyChar, newline, spaces, decimalDigit, hexDigit
 >   , lowerLatin, upperLatin, string
 >     -- ** @Word8@
->   , byte, anyByte, unicodeChar, unicodeString
+>   , byte, anyByte, anyAsciiChar, unicodeChar, unicodeString
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -68,6 +68,7 @@ Code that is part of the library appears on a gray background, like this block o
 > 
 > import qualified Data.ByteString as BS
 > import qualified Data.ByteString.Char8 as BSC
+> import Data.Char (chr)
 > import Data.List (intersperse, unwords)
 > import Data.Semigroup
 > import Data.String
@@ -516,6 +517,9 @@ For fun:
 > 
 > anyByte :: Parser Word8 Word8
 > anyByte = anyToken
+> 
+> anyAsciiChar :: Parser Word8 Char
+> anyAsciiChar = (chr . fromIntegral) <$> anyByte
 
 
 
