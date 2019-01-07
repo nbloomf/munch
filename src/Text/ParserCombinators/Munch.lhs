@@ -52,7 +52,7 @@ Code that is part of the library appears on a gray background, like this block o
 >   , char, newline, spaces, decimalDigit, hexDigit
 >   , lowerLatin, upperLatin, string
 >     -- ** @Word8@
->   , byte, unicodeChar
+>   , byte, unicodeChar, unicodeString
 >     -- * Errors
 >   , (<?>), Error(..), BasicError(..), Annotation(..), ParseError()
 >   , displayParseError
@@ -657,7 +657,12 @@ For example, we can use `<?>` with `mapM` and `char` to parse specific strings w
 Similarly, we can parse unicode characters as lists of bytes.
 
 > unicodeChar :: Char -> Parser Word8 [Word8]
-> unicodeChar c = mapM token (BS.unpack $ BSC.singleton c) <?> [c]
+> unicodeChar c =
+>   mapM token (BS.unpack $ BSC.singleton c) <?> [c]
+> 
+> unicodeString :: String -> Parser Word8 [Word8]
+> unicodeString str =
+>   mconcat (map unicodeChar str) <?> str
 
 So far we've glossed over the details of the `ParseError` type, but now it's time to unpack that. The purpose of an error type for a parser is to give human users relevant information about what went wrong. At the same time, we don't want to expect readers of the errors to know how this parsing library works, since in practice they'll be using some other tool and shouldn't need to care what parsing library it used.
 

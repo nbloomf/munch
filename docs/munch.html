@@ -129,7 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb2-29" data-line-number="29">  , char, newline, spaces, decimalDigit, hexDigit</a>
 <a class="sourceLine" id="cb2-30" data-line-number="30">  , lowerLatin, upperLatin, string</a>
 <a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="co">-- ** @Word8@</span></a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, unicodeChar</a>
+<a class="sourceLine" id="cb2-32" data-line-number="32">  , byte, unicodeChar, unicodeString</a>
 <a class="sourceLine" id="cb2-33" data-line-number="33">    <span class="co">-- * Errors</span></a>
 <a class="sourceLine" id="cb2-34" data-line-number="34">  , (<span class="fu">&lt;?&gt;</span>), <span class="dt">Error</span>(<span class="fu">..</span>), <span class="dt">BasicError</span>(<span class="fu">..</span>), <span class="dt">Annotation</span>(<span class="fu">..</span>), <span class="dt">ParseError</span>()</a>
 <a class="sourceLine" id="cb2-35" data-line-number="35">  , displayParseError</a>
@@ -627,7 +627,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb33-2" data-line-number="2">string str <span class="fu">=</span> mapM_ char str <span class="fu">&lt;?&gt;</span> str</a></code></pre></div>
 <p>Similarly, we can parse unicode characters as lists of bytes.</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="ot">unicodeChar ::</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> [<span class="dt">Word8</span>]</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">unicodeChar c <span class="fu">=</span> mapM token (BS.unpack <span class="fu">$</span> BSC.singleton c) <span class="fu">&lt;?&gt;</span> [c]</a></code></pre></div>
+<a class="sourceLine" id="cb34-2" data-line-number="2">unicodeChar c <span class="fu">=</span></a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">  mapM token (BS.unpack <span class="fu">$</span> BSC.singleton c) <span class="fu">&lt;?&gt;</span> [c]</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb34-5" data-line-number="5"><span class="ot">unicodeString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> [<span class="dt">Word8</span>]</a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">unicodeString str <span class="fu">=</span></a>
+<a class="sourceLine" id="cb34-7" data-line-number="7">  mconcat (map unicodeChar str) <span class="fu">&lt;?&gt;</span> str</a></code></pre></div>
 <p>So far we’ve glossed over the details of the <code>ParseError</code> type, but now it’s time to unpack that. The purpose of an error type for a parser is to give human users relevant information about what went wrong. At the same time, we don’t want to expect readers of the errors to know how this parsing library works, since in practice they’ll be using some other tool and shouldn’t need to care what parsing library it used.</p>
 <p>Our errors so far have been pretty simple. We have some <em>basic</em> errors, including those about unexpected characters and indentation. We also have a couple of <em>compound</em> errors, like the unexplained <code>Because</code> and <code>OneOf</code> and whatever is happening inside the implementation of <code>&lt;|&gt;</code>. The compound errors come in two flavors. In <code>&lt;|&gt;</code> we have two errors and want to report that both occurred; this takes two errors and mushes them into one. In <code>&lt;?&gt;</code> and <code>wouldSucceed</code> we have an error but want to annotate it with some extra information. This takes an error and an annotation and produces an error.</p>
 <p>This looks like a free algebra, in the universal algebra sense. We have a set of atoms (the basic errors) and some operations (mushing and annotation) and want to construct the “smallest” type that is closed under them. Assume for the moment that “mushing” (combining errors as in <code>&lt;|&gt;</code>) has to be associative – which it does, by the alternative functor laws. Then what we have is a free monoid on the basic errors (under mush) being acted on freely by the set of annotations. (!!!)</p>
