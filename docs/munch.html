@@ -516,7 +516,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb25-9" data-line-number="9"><span class="ot">byte ::</span> <span class="dt">Word8</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">Word8</span> <span class="dt">Word8</span></a>
 <a class="sourceLine" id="cb25-10" data-line-number="10">byte <span class="fu">=</span> token</a>
 <a class="sourceLine" id="cb25-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="ot">anyByte ::</span> <span class="dt">Parser</span> <span class="dt">Char</span> <span class="dt">Char</span></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="ot">anyByte ::</span> <span class="dt">Parser</span> <span class="dt">Word8</span> <span class="dt">Word8</span></a>
 <a class="sourceLine" id="cb25-13" data-line-number="13">anyByte <span class="fu">=</span> anyToken</a></code></pre></div>
 <h2 id="derived-combinators">Derived Combinators</h2>
 <p>Several handy combinators can be defined in terms of the applicative and monad interfaces.</p>

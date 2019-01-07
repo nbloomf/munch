@@ -514,7 +514,7 @@ For fun:
 > byte :: Word8 -> Parser Word8 Word8
 > byte = token
 > 
-> anyByte :: Parser Char Char
+> anyByte :: Parser Word8 Word8
 > anyByte = anyToken
 
 
